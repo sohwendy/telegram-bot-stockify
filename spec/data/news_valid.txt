@@ -1,0 +1,5 @@
+<item>
+  <title>Coal found</title>
+  <link>/*www.coal.com/news123.html</link>
+  <pubDate>Tue, 06 Oct 2015 03:31:39 GMT</pubDate>
+</item>

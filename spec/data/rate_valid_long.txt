@@ -1,0 +1,1 @@
+"USD/CNY","usdcny=x",6.5793,N/A,-0.001434,"usdcny=x",0

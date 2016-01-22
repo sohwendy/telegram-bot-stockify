@@ -27,15 +27,15 @@ module Formatter
   def self.format_stat(data)
     result = ''
     data.each { |key, value|
-      p value[:name]
       result << "#{value[:name]} #{key.upcase}\n"
-      result << format_spec(value)
-      result << format_news(value[:news])
+      result << print_spec(value)
+      result << print_news(value[:news])
     }
     result
   end
 
-  def self.format_spec(data)
+  # TODO: refactor this, inconsistent with other method
+  def self.print_spec(data)
     result = ''
     result << "#{trend(data[:change_amount].to_f)}  *$#{data[:amount]}*  #{data[:change_amount]}  #{data[:change_percent]}\n"
     result << "[dividend]   *$#{data[:dividend]}*\n"
@@ -44,12 +44,15 @@ module Formatter
     result
   end
 
-  def self.format_news(data)
+  # TODO: refactor this, inconsistent with other method
+  def self.print_news(data)
     result = ''
-    data.each { |hash|
-      result << "[#{hash[:title]}](#{hash[:url]})\n"
-      result << "#{hash[:date]}\n\n"
-    }
+    unless data.nil?
+      data.each { |hash|
+        result << "[#{hash[:title]}](#{hash[:url]})\n"
+        result << "#{hash[:date]}\n\n"
+      }
+    end
     result
   end
 

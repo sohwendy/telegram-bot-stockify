@@ -13,16 +13,19 @@ class StockParser
   end
 
   def get_from_tags(tag)
-    tag = 'name' unless tag
+    tag = 'poor' unless tag
     @hash.select { |_, value| value[:tag].downcase.include?(tag.downcase) }
   end
 
   def get_list(name)
     name = '' unless name
-    filtered = @hash.select { |row| row[1].downcase.include?(name.downcase) }
-    list = filtered.map { |key, value|
-      "#{key}    *#{value[:name]}*    #{value[:tag]}"
-    }
-    list.join("\n")
+    filtered = get_from_tags(name)
+    unless filtered.empty?
+      list = ''
+      filtered.each { |key, value|
+        list << "#{key}    *#{value[:name]}*    #{value[:tag]}\n"
+      }
+    end
+    list
   end
 end

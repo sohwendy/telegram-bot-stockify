@@ -20,7 +20,7 @@ class CurrencyParser
     case param.length
       when 3
         @parser_hash.keys.include?(param.slice(0, 3)) ? param.concat('sgd') : nil
-        when 6
+      when 6
         @parser_hash.keys.include?(param.slice(0, 3)) && @parser_hash.keys.include?(param.slice(3, 6)) ? param : nil
       else
         nil

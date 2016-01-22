@@ -5,3 +5,5 @@ source 'https://rubygems.org'
 
 gem 'telegram-bot-ruby'
 gem 'nokogiri'
+gem 'rspec'
+gem 'webmock'

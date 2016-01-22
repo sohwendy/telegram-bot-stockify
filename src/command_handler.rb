@@ -1,104 +1,63 @@
+require_relative 'api_handler'
 require_relative 'constants/constants'
-require 'open-uri'
-require 'nokogiri'
-require 'uri'
-require 'date'
+require_relative 'parser/stock_parser'
+require_relative 'parser/currency_parser'
+require_relative 'formatter'
 
 class CommandHandler
+  def initialize(param)
+    @logger = param
+    @currency = CurrencyParser.new(CURRENCY_PATH)
+    @stock = StockParser.new(STOCK_PATH)
+  end
 
-  FLAG = { 'NAME' => 'n',
-            'SYMBOL' => 's',
-            'LAST_TRADED_PRICE_ONLY' => 'l1',
-            'YR_WEEK_RANGE' => 'w',
-            'OPEN' => 'o',
-            'PE' => 'r',
-            'DIVIDEND' => 'd',
-            'YEAR_HIGH' => 'k',
-            'YEAR_LOW' => 'j',
-            'BOOK_VALUE' => 'b4'
-        }
-  PRICE_FLAGS = FLAG['NAME']+FLAG['SYMBOL']+FLAG['LAST_TRADED_PRICE_ONLY']
-  STAT_FLAGS = FLAG['NAME']+FLAG['SYMBOL']+FLAG['LAST_TRADED_PRICE_ONLY']+FLAG['PE']+FLAG['DIVIDEND']
+  def list(param)
+    @stock.get_list(param)
+  end
 
-  def self.get_chart(params)
-    query = params.include?(',') ? "%5ESTI&c=#{params}" : params
+  def charts(param)
+    ticker_hash = @stock.get_from_tags(param)
 
-    open(CHART_IMAGE_PATH, 'wb') do |file|
-      file << open("#{CHART_PATH}s=#{query}&z=l").read
+    if (ticker_hash && ticker_hash.length > 0)
+      ApiHandler.get_chart(ticker_hash.keys.join(','))
+      data = ApiHandler.get_price(ticker_hash.keys.join(','))
+      data.each_key { |key| data[key].merge!(ticker_hash[key]) }
+      result = Formatter.format({type: 'price', data: data})
     end
+
+    result
   end
 
-  def self.get_preview(params)
-    "#{CHART_PATH}s=#{params}"
-  end
-
-  def self.get_price(params)
-    file = open("#{PRICE_PATH}s=#{params}&f=#{PRICE_FLAGS}.csv").read
-
-    result = {}
-    if file[/\d/] && !file.start_with?('N/A')
-      CSV.parse(file).each do |row|
-        change = row[4].split(' ')
-        result[row[1]] = { name: row[0], amount: row[2], change_amount: change[0], change_percent: change[2] }
-      end
+  def rate(param)
+    param = @currency.validate_and_format(param)
+    if param
+      data = ApiHandler.get_currency(param)
+      result = Formatter.format({type: 'currency', data: data}) + ApiHandler.get_preview(param.concat('=x'))
     end
     result
   end
 
-  def self.get_stat(params)
-    breakdown = get_breakdown(params)
-    news = get_news(params)
-    if breakdown.empty?
-      {}
-    else
-      breakdown[params].merge!(news[params])
-      breakdown
-    end
-
-  end
-
-  def self.get_breakdown(params)
-    p params
-    file = open("#{PRICE_PATH}s=#{params}&f=#{STAT_FLAGS}.csv").read
-
-    result = {}
-    if file [/\d/] && !file.start_with?('N/A')
-      CSV.parse(file).each do |row|
-        change = row[6].split(' ')
-        result[row[1]] = {amount: row[2], change_amount: change[0], change_percent: change[2],
-                          volume: row[8], dividend: row[4], pe: row[3]}
-      end
+  def stat(param)
+    param.upcase!
+    ticker_hash = @stock.get_from_symbol(param)
+    ApiHandler.get_chart(param)
+    data = ApiHandler.get_stat(param)
+    if data && data.values && data.values.size > 0
+      data.each_key { |key| data[key].merge!(ticker_hash[key]) } unless ticker_hash.empty?
+      result = Formatter.format({type: 'stat', data: data})
     end
     result
   end
 
-
-  def self.get_news(params)
-    doc = Nokogiri::XML(open("#{NEWS_PATH}s=#{params}"))
-
-    result = []
-    doc.xpath('//item').each_with_index do |item, index|
-      if (index < 3 && !item.css('title').text.include?('Yahoo! Finance: RSS feed not found'))
-        date = DateTime.httpdate(item.css('pubDate').text)
-        result <<  {title: item.css('title').text,
-                    url: item.css('link').text.split('/*')[1],
-                    date: date.strftime('%d %b %Y %H:%M:%S GMT')}
-      end
+  def stock(param)
+    ticker_hash = @stock.get_from_symbol(param)
+    if (ticker_hash.keys.length == 0)
+      ticker_hash = { param => {}}
     end
-    { params => { news: result }}
-  end
-
-  def self.get_currency(params)
-    file = open("#{PRICE_PATH}s=#{params}=x&f=#{PRICE_FLAGS}.csv").read
-
-    result = {}
-    if file[/\d/] && !file.start_with?('N/A')
-      CSV.parse(file).each do |row|
-        codes = row[0].split('/')
-        change = row[4].split(' ')
-        result[params.to_s] = {from_code: codes[0], to_code: codes[1], amount: row[2], change_amount: change[0],
-                               change_percent: change[2]}
-      end
+    data = ApiHandler.get_price(ticker_hash.keys.first)
+    unless data.empty?
+      data = data.each_key { |key| data[key].merge!(ticker_hash[key]) }
+      result = Formatter.format({type: 'price', data: data})
     end
     result
   end
