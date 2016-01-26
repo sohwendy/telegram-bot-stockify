@@ -2,6 +2,15 @@ require_relative '../src/formatter'
 
 RSpec.describe ('Formatter') do
 
+  subject {Formatter}
+
+  it { is_expected.to respond_to(:format_currency)}
+  it { is_expected.to respond_to(:format_stat)}
+  it { is_expected.to respond_to(:format_list)}
+  it { is_expected.to respond_to(:format_price)}
+  it { is_expected.to respond_to(:print_news)}
+  it { is_expected.to respond_to(:print_spec)}
+
   it '#format_currency' do
     hash = {
               type: 'currency',
@@ -15,7 +24,16 @@ RSpec.describe ('Formatter') do
           }
 
     value = hash[:data]['ABC']
-    result = "_#{value[:from_code]} 1 = #{value[:to_code]} #{value[:amount]} #{EMOJI[:CHART_WITH_UPWARDS_TREND]}_\n\n"
+    result = "<i>#{value[:from_code]} 1 = #{value[:to_code]} #{value[:amount]} #{EMOJI[:CHART_WITH_UPWARDS_TREND]}</i>\n\n"
+
+    response = Formatter.format(hash)
+
+    expect(response).to eq(result)
+  end
+
+  it '#format_list' do
+    hash = { type: 'list', data: { a: {name: 'apple', tag: 'fruits'}, b: {name: 'banana', tag: 'fruits'}}}
+    result = "a    <b>apple</b>    fruits\nb    <b>banana</b>    fruits\n"
 
     response = Formatter.format(hash)
 
@@ -35,7 +53,7 @@ RSpec.describe ('Formatter') do
                   }
             }
     value = hash[:data]['ABC']
-    result = "#{hash[:data].keys.first} *$#{value[:amount]}* #{EMOJI[:CHART_WITH_DOWNWARDS_TREND]} #{value[:change_amount]}, #{value[:change_percent]}, #{value[:name]}\n"
+    result = "#{hash[:data].keys.first} <b>$#{value[:amount]}</b> #{EMOJI[:CHART_WITH_DOWNWARDS_TREND]} #{value[:change_amount]}, #{value[:change_percent]}, #{value[:name]}\n"
 
     response = Formatter.format(hash)
 
@@ -61,22 +79,22 @@ RSpec.describe ('Formatter') do
               }
       end
 
-    it '#format_spec' do
+    it '#print_spec' do
       value = @hash[:data]['ABC']
 
-      result = "#{EMOJI[:CHART_WITH_UPWARDS_TREND]}  *$#{value[:amount]}*  #{value[:change_amount]}  #{value[:change_percent]}\n"
-      result << "[dividend]   *$#{value[:dividend]}*\n"
-      result << "[pe ratio]   *$#{value[:pe]}*\n"
-      result << "[volume]     *#{value[:volume]}*\n\n"
+      result = "#{EMOJI[:CHART_WITH_UPWARDS_TREND]}  <b>$#{value[:amount]}</b>  #{value[:change_amount]}  #{value[:change_percent]}\n"
+      result << "[dividend]   <b>$#{value[:dividend]}</b>\n"
+      result << "[pe ratio]   <b>$#{value[:pe]}</b>\n"
+      result << "[volume]     <b>#{value[:volume]}</b>\n\n"
 
       response = Formatter.print_spec(value)
 
       expect(response).to eq(result)
     end
 
-    it '#format_news' do
+    it '#print_news' do
       value = @hash[:data]['ABC']['news']
-      result = "[#{value[0][:title]}](#{value[0][:url]})\n#{value[0][:date]}\n\n"
+      result = "<a href='#{value[0][:url]}'>#{value[0][:title]}</a>\n#{value[0][:date]}\n\n"
 
       response = Formatter.print_news(value)
 

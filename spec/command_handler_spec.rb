@@ -13,8 +13,9 @@ RSpec.describe('CommandHandler') do
   end
 
   it '#list' do
-    result = "D05.SI    *DBS Bank*    Finance\nO39.SI    *OCBC Bank*    Finance\nU11.SI    *UOB Bank*    Finance\nK71U.SI    *Keppel Reit*    REIT\nD5IU.SI    *Lippo Malls Trust*    REIT\n";
-    response = subject.list('')
+    result = "D05.SI    <b>DBS Bank</b>    Finance\nO39.SI    <b>OCBC Bank</b>    Finance\nU11.SI    <b>UOB Bank</b>    Finance\nK71U.SI    <b>Keppel Reit</b>    REIT\nD5IU.SI    <b>Lippo Malls Trust</b>    REIT\n";
+    list = subject.list('')
+    response = Formatter.format({type: 'list', data: list})
     expect(response).to eql(result)
   end
 
@@ -26,7 +27,7 @@ RSpec.describe('CommandHandler') do
     end
 
     it 'returns results for finance' do
-      result = "D05.SI *$13.88* 📈 +0.10, +0.73%, DBS Bank\nO39.SI *$7.72* 📈 +0.15, +1.98%, OCBC Bank\nU11.SI *$17.62* 📈 +0.55, +3.22%, UOB Bank\n"
+      result = "D05.SI <b>$13.88</b> 📈 +0.10, +0.73%, DBS Bank\nO39.SI <b>$7.72</b> 📈 +0.15, +1.98%, OCBC Bank\nU11.SI <b>$17.62</b> 📈 +0.55, +3.22%, UOB Bank\n"
       allow(ApiHandler).to receive(:get_chart).with("D05.SI,O39.SI,U11.SI").and_return(true)
 
       stub_request(:get, "#{PRICE_PATH}f=nsl1.csv&s=D05.SI,O39.SI,U11.SI").
@@ -47,7 +48,7 @@ RSpec.describe('CommandHandler') do
 
     it 'returns result for usdcny' do
       param = 'usdcny'
-      result = "_USD 1 = CNY 6.5793 📉_\n\n#{CHART_PATH}s=#{param}=x"
+      result = "<i>USD 1 = CNY 6.5793 📉</i>\n\n#{CHART_PATH}s=#{param}=x"
       stub_request(:get, "#{PRICE_PATH}f=nsl1.csv&s=#{param}=x").
               with(@header).
               to_return(:status => 200, :body => File.open("spec/data/rate_valid_long.txt"), :headers => {})
@@ -57,7 +58,7 @@ RSpec.describe('CommandHandler') do
 
     it 'returns results for usd' do
       param = 'usdsgd'
-      result = "_USD 1 = SGD 1.888 📉_\n\n#{CHART_PATH}s=#{param}=x"
+      result = "<i>USD 1 = SGD 1.888 📉</i>\n\n#{CHART_PATH}s=#{param}=x"
       stub_request(:get, "#{PRICE_PATH}f=nsl1.csv&s=#{param}=x").
               with(@header).
               to_return(:status => 200, :body => File.open("spec/data/rate_valid_short.txt"), :headers => {})
@@ -83,7 +84,7 @@ RSpec.describe('CommandHandler') do
 
     it 'returns data for predefined symbol' do
       param = 'O39.SI'
-      result = "OCBC Bank O39.SI\n📈  *$1.11*  0.0333  \n[dividend]   *$N/A*\n[pe ratio]   *$2.22*\n[volume]     *44400*\n\n[Coal found](www.coal.com/news123.html)\n06 Oct 2015 03:31:39 GMT\n\n"
+      result = "OCBC Bank O39.SI\n📈  <b>$1.11</b>  0.0333  \n[dividend]   <b>$N/A</b>\n[pe ratio]   <b>$2.22</b>\n[volume]     <b>44400</b>\n\n<a href='www.coal.com/news123.html'>Coal !&gt; found</a>\n06 Oct 2015 03:31:39 GMT\n\n"
       allow(ApiHandler).to receive(:get_chart).with(param).and_return(true)
       stub_request(:get, "#{PRICE_PATH}f=nsl1rd.csv&s=#{param}").
               with(@header).
@@ -97,7 +98,7 @@ RSpec.describe('CommandHandler') do
 
     it 'returns data for predefined symbol' do
       param = 'S11.SI'
-      result = "POSB S11.SI\n📈  *$1.11*  0.0333  \n[dividend]   *$N/A*\n[pe ratio]   *$2.22*\n[volume]     *44400*\n\n[Coal found](www.coal.com/news123.html)\n06 Oct 2015 03:31:39 GMT\n\n"
+      result = "POSB S11.SI\n📈  <b>$1.11</b>  0.0333  \n[dividend]   <b>$N/A</b>\n[pe ratio]   <b>$2.22</b>\n[volume]     <b>44400</b>\n\n<a href='www.coal.com/news123.html'>Coal !&gt; found</a>\n06 Oct 2015 03:31:39 GMT\n\n"
       allow(ApiHandler).to receive(:get_chart).with(param).and_return(true)
       stub_request(:get, "#{PRICE_PATH}f=nsl1rd.csv&s=#{param}").
               with(@header).
@@ -123,7 +124,7 @@ RSpec.describe('CommandHandler') do
 
     it 'returns data for existing symbol' do
       param = 'D05.SI'
-      result = "#{param} *$88.99* 📈 0.66, , DBS Bank\n"
+      result = "#{param} <b>$88.99</b> 📈 0.66, , DBS Bank\n"
       stub_request(:get, "#{PRICE_PATH}f=nsl1.csv&s=#{param}").
               with(@header).
               to_return(:status => 200, :body => File.open('spec/data/stock_predefined.txt'), :headers => {})
@@ -133,7 +134,7 @@ RSpec.describe('CommandHandler') do
 
     it 'returns data for predefined symbol' do
       param = 'GOOG'
-      result = "#{param} *$6.82* 📈 0.0766, , Google\n"
+      result = "#{param} <b>$6.82</b> 📈 0.0766, , Google\n"
       stub_request(:get, "#{PRICE_PATH}f=nsl1.csv&s=#{param}").
               with(@header).
               to_return(:status => 200, :body => File.open('spec/data/stock_dynamic.txt'), :headers => {})

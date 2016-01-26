@@ -19,13 +19,6 @@ class StockParser
 
   def get_list(name)
     name = '' unless name
-    filtered = get_from_tags(name)
-    unless filtered.empty?
-      list = ''
-      filtered.each { |key, value|
-        list << "#{key}    *#{value[:name]}*    #{value[:tag]}\n"
-      }
-    end
-    list
+    get_from_tags(name)
   end
 end
