@@ -16,14 +16,20 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
         result = nil
         arg = message.text.split(' ')
         arg[0].slice!(BOTNAME) if arg[0]
-        if arg[1].match(/^A-Za-z0-9./)
+        if !arg[1]
+          case arg[0]
+            when /^\/start$/
+              bot.api.send_message(chat_id: message.chat.id,
+                                   text: "hi, #{message.from.first_name} #{EMOJI[:FACE_THROWING_A_KISS]}")
+            else
+              bot.api.send_message(chat_id: message.chat.id,
+                                   text: "2nd input required. /stat goog")
+          end
+        elsif arg[1].match(/^A-Za-z0-9./)
           bot.api.send_message(chat_id: message.chat.id,
                                text: "only alphabet and numbers allowed. please try again.")
         else
           case arg[0]
-          when /^\/start$/
-            bot.api.send_message(chat_id: message.chat.id,
-                                 text: "hi, #{message.from.first_name} #{EMOJI[:FACE_THROWING_A_KISS]}")
 
           when /^\/help$/
             bot.api.send_message(chat_id: message.chat.id, text: INSTRUCTION, parse_mode: 'HTML')

@@ -67,7 +67,6 @@ RSpec.describe('CommandHandler') do
     end
   end
 
-
   context '#stat' do
     it 'returns nil for invalid symbol' do
       param = 'SINGAPORE'
@@ -75,7 +74,7 @@ RSpec.describe('CommandHandler') do
       stub_request(:get, "#{PRICE_PATH}f=nsl1rd.csv&s=#{param}").
               with(@header).
               to_return(:status => 200, :body => File.open('spec/data/stat_invalid.txt'), :headers => {})
-      stub_request(:get, "#{NEWS_PATH}s=#{param}").
+      stub_request(:get, "#{NEWS_PATH}s=#{param}&region=US&lang=en-US").
               with(@header).
               to_return(:status => 200, :body => File.open('spec/data/news_invalid.txt'), :headers => {})
 
@@ -89,7 +88,7 @@ RSpec.describe('CommandHandler') do
       stub_request(:get, "#{PRICE_PATH}f=nsl1rd.csv&s=#{param}").
               with(@header).
               to_return(:status => 200, :body => File.open('spec/data/stat_predefined.txt'), :headers => {})
-      stub_request(:get, "#{NEWS_PATH}s=#{param}").
+      stub_request(:get, "#{NEWS_PATH}s=#{param}&region=US&lang=en-US").
               with(@header).
               to_return(:status => 200, :body => File.open('spec/data/news_valid.txt'), :headers => {})
 
@@ -103,7 +102,7 @@ RSpec.describe('CommandHandler') do
       stub_request(:get, "#{PRICE_PATH}f=nsl1rd.csv&s=#{param}").
               with(@header).
               to_return(:status => 200, :body => File.open('spec/data/stat_dynamic.txt'), :headers => {})
-      stub_request(:get, "#{NEWS_PATH}s=#{param}").
+      stub_request(:get, "#{NEWS_PATH}s=#{param}&region=US&lang=en-US").
               with(@header).
               to_return(:status => 200, :body => File.open('spec/data/news_valid.txt'), :headers => {})
 
