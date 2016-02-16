@@ -21,6 +21,11 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
             when /^\/start$/
               bot.api.send_message(chat_id: message.chat.id,
                                    text: "hi, #{message.from.first_name} #{EMOJI[:FACE_THROWING_A_KISS]}")
+            when /^\/list$/
+              list = command.list(arg[1])
+              result = Formatter.format({type: 'list', data: list})
+              bot.api.send_message(chat_id: message.chat.id, text: result || "Sorry #{message.from.first_name}, I cant find [#{arg[1]}] in /list",
+                                   parse_mode: 'HTML')
             else
               bot.api.send_message(chat_id: message.chat.id,
                                    text: "2nd input required. /stat goog")
