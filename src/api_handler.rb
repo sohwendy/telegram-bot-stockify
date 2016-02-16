@@ -73,7 +73,7 @@ class ApiHandler
 
 
   def self.get_news(params)
-    doc = Nokogiri::XML(open("#{NEWS_PATH}s=#{params}"))
+    doc = Nokogiri::XML(open("#{NEWS_PATH}s=#{params}&region=US&lang=en-US"))
 
     result = []
     doc.xpath('//item').each_with_index do |item, index|
