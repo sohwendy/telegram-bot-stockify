@@ -1,6 +1,6 @@
 CHART_PATH = 'http://chart.finance.yahoo.com/z?'
 PRICE_PATH = 'http://download.finance.yahoo.com/d/quotes.csv?'
-NEWS_PATH = 'http://finance.yahoo.com/rss/headline?'
+NEWS_PATH = 'https://finance.yahoo.com/rss/headline?'
 CURRENCY_PATH = './data/currency.csv'
 STOCK_PATH = './data/stock.csv'
 CHART_IMAGE_PATH = './tmp/chart.jpg'
