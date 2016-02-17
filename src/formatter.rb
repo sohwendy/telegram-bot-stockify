@@ -1,5 +1,3 @@
-require_relative 'constants/emoji_constants'
-
 module Formatter
 
   def self.format(data)
@@ -66,11 +64,11 @@ module Formatter
 
   def self.trend(value)
     if value > 0
-      EMOJI[:CHART_WITH_UPWARDS_TREND]
+      '\xF0\x9F\x93\x88'
     elsif value < 0
-      EMOJI[:CHART_WITH_DOWNWARDS_TREND]
+      '\xF0\x9F\x93\x89'
     else
-      EMOJI[:HEAVY_MINUS_SIGN]
+      '\xE2\x9E\x96'
     end
   end
 end
