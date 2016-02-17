@@ -1,5 +1,4 @@
-/log
-tmp/*
-*secrets.*
-bot_testbed.rb
+*/chart.jpg
+secrets.rb
+
 .idea/
