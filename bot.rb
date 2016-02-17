@@ -2,10 +2,8 @@ require 'telegram/bot'
 require_relative 'src/constants/constants'
 require_relative 'src/constants/secrets'
 require_relative 'src/command_handler'
-require_relative 'src/parser/sticker_parser'
 require_relative 'src/formatter'
 
-# sticker = StickerParser.new
 logger = Logger.new(LOG_PATH, Logger::DEBUG)
 command = CommandHandler.new(logger)
 
@@ -16,11 +14,12 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
         result = nil
         arg = message.text.split(' ')
         arg[0].slice!(BOTNAME) if arg[0]
+
         if !arg[1]
           case arg[0]
             when /^\/start$/
               bot.api.send_message(chat_id: message.chat.id,
-                                   text: "hi, #{message.from.first_name} #{EMOJI[:FACE_THROWING_A_KISS]}")
+                                   text: "hi, #{message.from.first_name} \xF0\x9F\x98\x98")
             when /^\/list$/
               list = command.list(arg[1])
               result = Formatter.format({type: 'list', data: list})
@@ -72,13 +71,11 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
 
           else
             logger.warn("friend #{message.from.first_name} #{message.from.id} says #{message.text}")
-            # bot.api.send_sticker(chat_id: message.chat.id, sticker: sticker.get_random_sticker, caption)
             bot.api.send_message(chat_id: message.chat.id, text: "#{message.from.first_name}, I dont understand #{message.text}")
           end
         end
       else
         logger.warn("stranger #{message.from.first_name} #{message.from.id} #{message.text} me")
-        # bot.api.send_sticker(chat_id: message.chat.id, sticker: sticker.get_random_sticker)
         # bot.api.send_message(chat_id: message.chat.id, text: "#{EMOJI[:CONSTRUCTION_SIGN]} not ready...")
       end
     rescue Exception => e
