@@ -1,31 +1,41 @@
-# Telegram::Ruby::Sample
+telegram-bot-kabushiki
 
-TODO: Write a gem description
+WIP
 
-## Installation
+A simple telegram bot to retrieve stock info from Yahoo API.
+Kabushiki is a japanese word for stock market
 
-Add this line to your application's Gemfile:
+Using the telegram-bot-ruby wrapper for Telegram API.
 
-```ruby
-gem 'telegram-ruby-sample'
-```
+Installation
 
-And then execute:
+Execute:
 
-    $ bundle
+$ bundle
+Configuration
 
-Or install it yourself as:
+Add the name 'BOT_NAME'and token 'TOKEN' of your bot.
 
-    $ gem install telegram-ruby-sample
+Execute:
 
-## Usage
+$ ruby bot.rb
+Contributing
 
-TODO: Write usage instructions here
+Fork it
+Create your feature branch (git checkout -b my-new-feature)
+Commit your changes (git commit -am 'Add some feature')
+Push to the branch (git push origin my-new-feature)
+Create new Pull Request
+Usage
 
-## Contributing
+/help: shows the commands available
 
-1. Fork it ( https://github.com/[my-github-username]/telegram-ruby-sample/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+/list: gives stocks available in this bot
+
+/rate <currency code><currency code>: get currency rate and chart using 3-digit currency code. (example: /rate usdeur)
+
+/stock <ticker>: states the last traded price of *one* stock counter. (example: /stock GOOG)
+
+/charts <tag>: (expert mode) depicts the graphical %change of some of the matching SG stocks and STI. (example: /charts bank)
+
+/stat <ticker>: (expert mode) provides details about the stock counter (example: /stat GOOG)

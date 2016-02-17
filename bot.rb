@@ -22,7 +22,7 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
 
       result = nil
       arg = message.text.split(' ')
-      arg[0].slice!(BOTNAME)
+      arg[0].slice!(BOT_NAME)
 
       cmd = arg[0] ? arg[0][1..-1] : nil
       param = arg[1] && arg[1].match(/^[A-Za-z0-9.]+$/) ? arg[1] : nil

@@ -12,10 +12,9 @@ INSTRUCTION = "i fetch finance data from yahoo \n
 Commands:
 /list - gives stocks available in this bot
 /rate - get currency rate and chart using 3-digit currency code /rate usdeur
-/charts - (expert mode) depicts the graphical %change of some of the matching SG stocks and STI /chart bank
-/stock - states the last traded price of *one* stock counter /price Z78.SI
-/stat - (expert mode) lists some SG stocks matching the given name /chart bank"
-
+/stock - states the last traded price of *one* stock counter /stock Z78.SI
+/charts - (expert mode) depicts the graphical %change of some of the matching SG stocks and STI /charts bank
+/stat - (expert mode) provides details about the stock counter /stat GOOG"
 
 def welcome_reply(caller)
   "hi, #{caller.first_name} \xF0\x9F\x98\x98"
