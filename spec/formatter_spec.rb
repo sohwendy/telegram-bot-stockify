@@ -24,7 +24,7 @@ RSpec.describe ('Formatter') do
           }
 
     value = hash[:data]['ABC']
-    result = "<i>#{value[:from_code]} 1 = #{value[:to_code]} #{value[:amount]} #{EMOJI[:CHART_WITH_UPWARDS_TREND]}</i>\n\n"
+    result = "<i>#{value[:from_code]} 1 = #{value[:to_code]} #{value[:amount]} \xF0\x9F\x93\x88</i>\n\n"
 
     response = Formatter.format(hash)
 
@@ -53,7 +53,7 @@ RSpec.describe ('Formatter') do
                   }
             }
     value = hash[:data]['ABC']
-    result = "#{hash[:data].keys.first} <b>$#{value[:amount]}</b> #{EMOJI[:CHART_WITH_DOWNWARDS_TREND]} #{value[:change_amount]}, #{value[:change_percent]}, #{value[:name]}\n"
+    result = "#{hash[:data].keys.first} <b>$#{value[:amount]}</b> \xF0\x9F\x93\x89 #{value[:change_amount]}, #{value[:change_percent]}, #{value[:name]}\n"
 
     response = Formatter.format(hash)
 
@@ -82,7 +82,7 @@ RSpec.describe ('Formatter') do
     it '#print_spec' do
       value = @hash[:data]['ABC']
 
-      result = "#{EMOJI[:CHART_WITH_UPWARDS_TREND]}  <b>$#{value[:amount]}</b>  #{value[:change_amount]}  #{value[:change_percent]}\n"
+      result = "\xF0\x9F\x93\x88  <b>$#{value[:amount]}</b>  #{value[:change_amount]}  #{value[:change_percent]}\n"
       result << "[dividend]   <b>$#{value[:dividend]}</b>\n"
       result << "[pe ratio]   <b>$#{value[:pe]}</b>\n"
       result << "[volume]     <b>#{value[:volume]}</b>\n\n"

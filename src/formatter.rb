@@ -9,7 +9,9 @@ module Formatter
   def self.format_list(data)
     result = ''
     data.each { |key, value|
-      result << "#{key}    <b>#{value[:name]}</b>    #{value[:tag]}\n"
+      result << "#{key}    "
+      result << "<b>#{value[:name]}</b>    "
+      result << "#{value[:tag]}\n"
     }
     result
   end
@@ -17,7 +19,9 @@ module Formatter
   def self.format_currency(data)
     result = ''
     data.each { |_, value|
-      result << "<i>#{value[:from_code]} 1 = #{value[:to_code]} #{value[:amount]} #{trend(value[:change_amount].to_f)}</i>\n\n"
+      result << "<i>#{value[:from_code]} 1 = "
+      result << "#{value[:to_code]} #{value[:amount]} "
+      result << "#{trend(value[:change_amount].to_f)}</i>\n\n"
     }
     result
   end
@@ -25,7 +29,12 @@ module Formatter
   def self.format_price(data)
     result = ''
     data.each { |key, value|
-      result << "#{key} <b>$#{value[:amount]}</b> #{trend(value[:change_amount].to_f)} #{value[:change_amount]}, #{value[:change_percent]}, #{value[:name]}\n"
+      result << "#{key} "
+      result << "<b>$#{value[:amount]}</b> "
+      result << "#{trend(value[:change_amount].to_f)} "
+      result << "#{value[:change_amount]}, "
+      result << "#{value[:change_percent]}, "
+      result << "#{value[:name]}\n"
     }
     result
   end
@@ -43,7 +52,10 @@ module Formatter
   # TODO: refactor this, inconsistent with other method
   def self.print_spec(data)
     result = ''
-    result << "#{trend(data[:change_amount].to_f)}  <b>$#{data[:amount]}</b>  #{data[:change_amount]}  #{data[:change_percent]}\n"
+    result << "#{trend(data[:change_amount].to_f)}"
+    result << "  <b>$#{data[:amount]}</b>  "
+    result << "#{data[:change_amount]}  "
+    result << "#{data[:change_percent]}\n"
     result << "[dividend]   <b>$#{data[:dividend]}</b>\n"
     result << "[pe ratio]   <b>$#{data[:pe]}</b>\n"
     result << "[volume]     <b>#{data[:volume]}</b>\n\n"
@@ -64,11 +76,11 @@ module Formatter
 
   def self.trend(value)
     if value > 0
-      '\xF0\x9F\x93\x88'
+      "\xF0\x9F\x93\x88"
     elsif value < 0
-      '\xF0\x9F\x93\x89'
+      "\xF0\x9F\x93\x89"
     else
-      '\xE2\x9E\x96'
+      "\xE2\x9E\x96"
     end
   end
 end
