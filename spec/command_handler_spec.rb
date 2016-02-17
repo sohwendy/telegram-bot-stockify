@@ -81,7 +81,7 @@ RSpec.describe('CommandHandler') do
       expect(subject.stat(param)).to eql(nil)
     end
 
-    it 'returns data for predefined symbol' do
+    it 'returns data for existing symbol' do
       param = 'O39.SI'
       result = "OCBC Bank O39.SI\n📈  <b>$1.11</b>  0.0333  \n[dividend]   <b>$N/A</b>\n[pe ratio]   <b>$2.22</b>\n[volume]     <b>44400</b>\n\n<a href='www.coal.com/news123.html'>Coal !&gt; found</a>\n06 Oct 2015 03:31:39 GMT\n\n"
       allow(ApiHandler).to receive(:get_chart).with(param).and_return(true)

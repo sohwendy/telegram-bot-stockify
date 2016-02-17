@@ -7,79 +7,82 @@ require_relative 'src/formatter'
 logger = Logger.new(LOG_PATH, Logger::DEBUG)
 command = CommandHandler.new(logger)
 
+COMMAND = {'start' => false, 'help' => false, 'list' => false, 'stock' => true,
+           'rate' => true, 'charts' => true, 'stat' => true}
+
 Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
   bot.listen do |message|
     begin
-      if message.text
-        result = nil
-        arg = message.text.split(' ')
-        arg[0].slice!(BOTNAME) if arg[0]
+      logger.info("#{message.from} says #{message.text}...")
+      unless message.text
+        bot.api.send_message(chat_id: message.chat.id,
+                             text: INSTRUCTION)
+        return
+      end
 
-        if !arg[1]
-          case arg[0]
-            when /^\/start$/
-              bot.api.send_message(chat_id: message.chat.id,
-                                   text: "hi, #{message.from.first_name} \xF0\x9F\x98\x98")
-            when /^\/list$/
-              list = command.list(arg[1])
-              result = Formatter.format({type: 'list', data: list})
-              bot.api.send_message(chat_id: message.chat.id, text: result || "Sorry #{message.from.first_name}, I cant find [#{arg[1]}] in /list",
-                                   parse_mode: 'HTML')
-            else
-              bot.api.send_message(chat_id: message.chat.id,
-                                   text: "2nd input required. /stat goog")
-          end
-        elsif arg[1].match(/^A-Za-z0-9./)
+      result = nil
+      arg = message.text.split(' ')
+      arg[0].slice!(BOTNAME)
+
+      cmd = arg[0] ? arg[0][1..-1] : nil
+      param = arg[1] && arg[1].match(/^[A-Za-z0-9.]+$/) ? arg[1] : nil
+
+      if !COMMAND.include?(cmd)
+        return bot.api.send_message(chat_id: message.chat.id,
+                             text: "\xF0\x9F\x99\x88 \xF0\x9F\x99\x89 \xF0\x9F\x99\x8A #{arg[0]} not found")
+      end
+
+      if COMMAND[cmd] && param.nil?
+        return bot.api.send_message(chat_id: message.chat.id,
+                             text: "\xF0\x9F\x99\x85 #{arg[1]} not valid. only alphabet, number and . allowed")
+      end
+
+      case cmd
+        when 'help'
           bot.api.send_message(chat_id: message.chat.id,
-                               text: "only alphabet and numbers allowed. please try again.")
+                               text: INSTRUCTION)
+
+        when 'list'
+          list = command.list(param)
+          result = Formatter.format({type: 'list', data: list})
+          bot.api.send_message(chat_id: message.chat.id,
+                               text: result || negative_reply(message.from, param, cmd),
+                               parse_mode: 'HTML')
+        when 'stock'
+          result = command.stock(param)
+          bot.api.send_message(chat_id: message.chat.id,
+                               text: result || negative_reply(message.from, param, cmd),
+                               parse_mode: 'HTML')
+
+        when 'charts'
+          result = command.charts(param)
+          bot.api.send_photo(chat_id: message.chat.id, photo: File.new(CHART_IMAGE_PATH)) if result
+          bot.api.send_message(chat_id: message.chat.id,
+                               text: result || negative_reply(message.from, param, cmd),
+                               parse_mode: 'HTML')
+
+        when 'rate'
+          result = command.rate(param)
+          bot.api.send_message(chat_id: message.chat.id,
+                               text: result || negative_reply(message.from, param, cmd),
+                               parse_mode: 'HTML')
+
+        when 'stat'
+          result = command.stat(param)
+          bot.api.send_photo(chat_id: message.chat.id,
+                             photo: File.new(CHART_IMAGE_PATH)) if result
+
+          bot.api.send_message(chat_id: message.chat.id,
+                               text: result || negative_reply(message.from, param, cmd),
+                               parse_mode: 'HTML',
+                               disable_web_page_preview: true)
         else
-          case arg[0]
+          bot.api.send_message(chat_id: message.chat.id,
+                               text: welcome_reply(message.from))
 
-          when /^\/help$/
-            bot.api.send_message(chat_id: message.chat.id, text: INSTRUCTION, parse_mode: 'HTML')
-
-          when /^\/list$/
-            list = command.list(arg[1])
-            result = Formatter.format({type: 'list', data: list})
-            bot.api.send_message(chat_id: message.chat.id, text: result || "Sorry #{message.from.first_name}, I cant find [#{arg[1]}] in /list",
-                                 parse_mode: 'HTML')
-
-          when /^\/stock$/
-            result = command.stock(arg[1]) if arg[1]
-            bot.api.send_message(chat_id: message.chat.id, text: result || "Sorry #{message.from.first_name}, I cant find [#{arg[1]}] in /stock",
-                                 parse_mode: 'HTML')
-
-          when /^\/charts$/
-            result = command.charts(arg[1]) if arg[1]
-            bot.api.send_photo(chat_id: message.chat.id, photo: File.new(CHART_IMAGE_PATH)) if result
-            bot.api.send_message(chat_id: message.chat.id, text: result || "Sorry #{message.from.first_name}, I cant find [#{arg[1]}]",
-                                 parse_mode: 'HTML')
-
-          when /^\/rate$/
-            result = command.rate(arg[1]) if arg[1]
-            bot.api.send_message(chat_id: message.chat.id,
-                                 text: result || "Sorry #{message.from.first_name}, I cant find [#{arg[1]}] in /rate",
-                                 parse_mode: 'HTML')
-
-          when /^\/stat$/
-            result = command.stat(arg[1]) if arg[1]
-            bot.api.send_photo(chat_id: message.chat.id, photo: File.new(CHART_IMAGE_PATH)) if result
-
-            bot.api.send_message(chat_id: message.chat.id,
-                                 text: result || "sorry #{message.from.first_name}, I cant find [#{arg[1]}] in /stat",
-                                 parse_mode: 'HTML', disable_web_page_preview: true)
-
-          else
-            logger.warn("friend #{message.from.first_name} #{message.from.id} says #{message.text}")
-            bot.api.send_message(chat_id: message.chat.id, text: "#{message.from.first_name}, I dont understand #{message.text}")
-          end
-        end
-      else
-        logger.warn("stranger #{message.from.first_name} #{message.from.id} #{message.text} me")
-        # bot.api.send_message(chat_id: message.chat.id, text: "#{EMOJI[:CONSTRUCTION_SIGN]} not ready...")
       end
     rescue Exception => e
-      logger.fatal("died because #{message.from.first_name} #{message.from.id} #{message.text} >>> #{e}\n ")
+      logger.fatal(exception_log(message.from, message.text, e))
     end
   end
 end

@@ -16,3 +16,16 @@ Commands:
 /stock - states the last traded price of *one* stock counter /price Z78.SI
 /stat - (expert mode) lists some SG stocks matching the given name /chart bank"
 
+
+def welcome_reply(caller)
+  "hi, #{caller.first_name} \xF0\x9F\x98\x98"
+end
+
+def negative_reply(caller, param, cmd)
+  "sorry #{caller.first_name}, i cant find [#{param}] in /#{cmd}"
+end
+
+def exception_log(caller, msg, e)
+  "killed by #{caller.first_name} #{caller.id} #{msg}:\n #{e}\n "
+end
+
