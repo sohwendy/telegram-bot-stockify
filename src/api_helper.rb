@@ -7,18 +7,18 @@ require 'sanitize'
 
 module ApiHelper
   FLAG = { 'NAME' => 'n',
-            'SYMBOL' => 's',
-            'LAST_TRADED_PRICE_ONLY' => 'l1',
-            'YR_WEEK_RANGE' => 'w',
-            'OPEN' => 'o',
-            'PE' => 'r',
-            'DIVIDEND' => 'd',
-            'YEAR_HIGH' => 'k',
-            'YEAR_LOW' => 'j',
-            'BOOK_VALUE' => 'b4'
-        }
-  PRICE_FLAGS = FLAG['NAME']+FLAG['SYMBOL']+FLAG['LAST_TRADED_PRICE_ONLY']
-  STAT_FLAGS = FLAG['NAME']+FLAG['SYMBOL']+FLAG['LAST_TRADED_PRICE_ONLY']+FLAG['PE']+FLAG['DIVIDEND']
+           'SYMBOL' => 's',
+           'LAST_TRADED_PRICE_ONLY' => 'l1',
+           'YR_WEEK_RANGE' => 'w',
+           'OPEN' => 'o',
+           'PE' => 'r',
+           'DIVIDEND' => 'd',
+           'YEAR_HIGH' => 'k',
+           'YEAR_LOW' => 'j',
+           'BOOK_VALUE' => 'b4'
+        }.freeze
+  PRICE_FLAGS = FLAG['NAME'] + FLAG['SYMBOL'] + FLAG['LAST_TRADED_PRICE_ONLY']
+  STAT_FLAGS = FLAG['NAME'] + FLAG['SYMBOL'] + FLAG['LAST_TRADED_PRICE_ONLY'] + FLAG['PE'] + FLAG['DIVIDEND']
 
   def get_chart(params)
     query = params.include?(',') ? "%5ESTI&c=#{params}" : params
@@ -62,9 +62,7 @@ module ApiHelper
     result = {}
     if file [/\d/] && !file.start_with?('N/A')
       CSV.parse(file).each do |row|
-        change = row[6].split(' ')
-        result[row[1]] = {name: row[0], amount: row[2], change_amount: change[0], change_percent: change[2],
-                          volume: row[8], dividend: row[4], pe: row[3]}
+        result[row[1]] = parse_breakdown(row)
       end
     end
     result
@@ -75,14 +73,12 @@ module ApiHelper
 
     result = []
     doc.xpath('//item').each_with_index do |item, index|
-      if (index < 3 && !item.css('title').text.include?('Yahoo! Finance: RSS feed not found'))
-        date = DateTime.httpdate(item.css('pubDate').text)
-        result <<  {title: Sanitize.fragment(item.css('title').text),
-                    url: item.css('link').text.split('/*')[1],
-                    date: date.strftime('%d %b %Y %H:%M:%S GMT')}
+      break if index > 2
+      unless item.css('title').text.include?('Yahoo! Finance: RSS feed not found')
+        result << parse_news(item)
       end
     end
-    { params => { news: result }}
+    { params => { news: result } }
   end
 
   def get_currency(params)
@@ -91,13 +87,29 @@ module ApiHelper
     result = {}
     if file[/\d/] && !file.start_with?('N/A')
       CSV.parse(file).each do |row|
-        codes = row[0].split('/')
-        change = row[4].split(' ')
-        result[params.to_s] = {from_code: codes[0], to_code: codes[1], amount: row[2], change_amount: change[0],
-                               change_percent: change[2]}
+        result[params.to_s] = parse_currency(row)
       end
     end
     result
   end
-end
 
+  private
+
+  def parse_breakdown(row)
+    change = row[6].split(' ')
+    { name: row[0], amount: row[2], change_amount: change[0], change_percent: change[2], volume: row[8],
+      dividend: row[4], pe: row[3] }
+  end
+
+  def parse_currency(row)
+    codes = row[0].split('/')
+    change = row[4].split(' ')
+    { from_code: codes[0], to_code: codes[1], amount: row[2], change_amount: change[0], change_percent: change[2] }
+  end
+
+  def parse_news(item)
+    date = DateTime.httpdate(item.css('pubDate').text)
+    { title: Sanitize.fragment(item.css('title').text), url: item.css('link').text.split('/*')[1],
+      date: date.strftime('%d %b %Y %H:%M:%S GMT') }
+  end
+end

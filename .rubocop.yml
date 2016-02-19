@@ -1,0 +1,15 @@
+AllCops:
+  Exclude:
+    - telegram-bot-kabushiki.gemspec
+    - 'spec/spec_helper.rb'
+Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 120
+Style/NumericLiterals:
+  Enabled: false
+
+Style/UnneededInterpolation:
+  Exclude:
+    - 'src/format_helper.rb'

@@ -15,17 +15,17 @@ class CommandHandler
 
   def list(param)
     list = @stock.get_list(param)
-    format({type: 'list', data: list})
+    format(type: 'list', data: list)
   end
 
   def charts(param)
     ticker_hash = @stock.get_from_tags(param)
 
-    if (ticker_hash && ticker_hash.length > 0)
+    if ticker_hash && !ticker_hash.empty?
       get_chart(ticker_hash.keys.join(','))
       data = get_price(ticker_hash.keys.join(','))
       data.each_key { |key| data[key].merge!(ticker_hash[key]) }
-      result = format({type: 'price', data: data})
+      result = format(type: 'price', data: data)
     end
 
     result
@@ -35,7 +35,7 @@ class CommandHandler
     param = @currency.validate_and_format(param)
     if param
       data = get_currency(param)
-      result = format({type: 'currency', data: data}) + get_preview(param.concat('=x'))
+      result = format(type: 'currency', data: data) + get_preview(param.concat('=x'))
     end
     result
   end
@@ -45,24 +45,21 @@ class CommandHandler
     ticker_hash = @stock.get_from_symbol(param)
     get_chart(param)
     data = get_stat(param)
-    if data && data.values && data.values.size > 0
+    if data && data.values && !data.values.empty?
       data.each_key { |key| data[key].merge!(ticker_hash[key]) } unless ticker_hash.empty?
-      result = format({type: 'stat', data: data})
+      result = format(type: 'stat', data: data)
     end
     result
   end
 
   def stock(param)
     ticker_hash = @stock.get_from_symbol(param)
-    if (ticker_hash.keys.length == 0)
-      ticker_hash = { param => {}}
-    end
+    ticker_hash = { param => {} } if ticker_hash.keys.empty?
     data = get_price(ticker_hash.keys.first)
     unless data.empty?
       data = data.each_key { |key| data[key].merge!(ticker_hash[key]) }
-      result = format({type: 'price', data: data})
+      result = format(type: 'price', data: data)
     end
     result
   end
 end
-
