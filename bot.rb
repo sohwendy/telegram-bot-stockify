@@ -12,7 +12,10 @@ COMMAND = { 'start' => false, 'help' => false, 'list' => false, 'stock' => true,
 Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
   bot.listen do |message|
     begin
-      logger.info("#{message.from.first_name} #{message.from.id}  says #{message.text}...")
+      logger.info("#{message.from.first_name} #{message.from.id} says #{message.text}...")
+
+      next if DateTime.now.to_time.to_i - message.date > TIMEOUT
+
       unless message.text
         bot.api.send_message(chat_id: message.chat.id, text: INSTRUCTION)
         break
