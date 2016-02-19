@@ -4,7 +4,7 @@ require './src/constants/secrets'
 require './src/command_handler'
 
 namespace :bot do
-  desc "send stock info for special user"
+  desc 'send stock info for special user'
   task :push do
     Telegram::Bot::Client.run(TOKEN) do |bot|
       result = CommandHandler.new.charts('finance')
