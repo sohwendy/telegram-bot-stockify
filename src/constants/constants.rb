@@ -45,8 +45,34 @@ class Emoji
   COW_FACE = "\xF0\x9F\x90\xAE".freeze
   CHART_WITH_UPWARDS_TREND = "\xF0\x9F\x93\x88".freeze
   CHART_WITH_DOWNWARDS_TREND = "\xF0\x9F\x93\x89".freeze
+  FACE_WITH_NO_GOOD_GESTURE = "\xF0\x9F\x99\x85".freeze
   HEAVY_MINUS_SIGN = "\xE2\x9E\x96".freeze
   SEE_NO_EVIL_MONKEY = "\xF0\x9F\x99\x88".freeze
   HEAR_NO_EVIL_MONKEY = "\xF0\x9F\x99\x89".freeze
   SPEAK_NO_EVIL_MONKEY = "\xF0\x9F\x99\x8A".freeze
 end
+
+
+COMMAND = { start:
+                    { valid_param: false },
+            help:
+                    { valid_param: false },
+            list:
+                    { valid_param: false, msg: { parse_mode: 'HTML' } },
+            stock:
+                    { valid_param: true, msg: { parse_mode: 'HTML' } },
+            rate:
+                    { valid_param: true, msg: { parse_mode: 'HTML' } },
+            charts:
+                    { valid_param: true, photo: true, msg: { parse_mode: 'HTML' } },
+            stat:
+                    { valid_param: true, photo: true, msg: { parse_mode: 'HTML' , disable_web_page_preview: true} },
+            watch:
+                    { valid_param: true, authenticate: true, msg: { parse_mode: 'HTML' } },
+            unwatch:
+                    { valid_param: true, authenticate: true, msg: { parse_mode: 'HTML' } },
+            watch_clear:
+                    { valid_param: false, authenticate: true, msg: { parse_mode: 'HTML' } },
+            watch_list:
+                    { valid_param: false, authenticate: true, msg: { parse_mode: 'HTML' } }
+        }.freeze
