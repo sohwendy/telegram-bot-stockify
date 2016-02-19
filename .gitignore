@@ -1,4 +1,5 @@
 tmp/
 errors.log
+.byebug_history
 secrets.rb
 .idea/
