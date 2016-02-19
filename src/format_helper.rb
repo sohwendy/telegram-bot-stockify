@@ -1,3 +1,5 @@
+require_relative 'constants/constants'
+
 module FormatHelper
   def format(data)
     if respond_to?("format_#{data[:type]}")
@@ -75,11 +77,11 @@ module FormatHelper
 
   def trend(value)
     if value > 0
-      "\xF0\x9F\x93\x88"
+      Emoji::CHART_WITH_UPWARDS_TREND
     elsif value < 0
-      "\xF0\x9F\x93\x89"
+      Emoji::CHART_WITH_DOWNWARDS_TREND
     else
-      "\xE2\x9E\x96"
+      Emoji::HEAVY_MINUS_SIGN
     end
   end
 end
