@@ -1,7 +1,16 @@
 require_relative '../src/api_helper'
 require 'csv'
+require 'byebug'
 
-RSpec.describe('ApiHandler') do
+RSpec.describe('ApiHelper') do
+
+  subject {
+    class A
+      include ApiHelper
+    end
+
+    A.new
+  }
 
   before(:each) do
     stub_const('CHART_PATH', 'url/')
@@ -10,7 +19,7 @@ RSpec.describe('ApiHandler') do
     stub_const('NEWS_PATH', 'news/')
     stub_const('CHART_IMAGE_PATH', 'tmp/test_image.jpg')
     #TODO refactor this
-    allow(OpenURI).to receive(:open).with(CHART_PATH, 'wb').and_return('adahsdas')
+    allow(OpenURI).to receive(:open).with(CHART_PATH, 'wb').and_return('chart')
   end
 
   it '#get_chart'
@@ -18,7 +27,7 @@ RSpec.describe('ApiHandler') do
   it '#get_preview' do
     params = 'coffee'
 
-    response = ApiHandler.get_preview(params)
+    response = subject.get_preview(params)
 
     expect(response).to eql("#{CHART_PATH}s=#{params}")
   end
@@ -29,17 +38,17 @@ RSpec.describe('ApiHandler') do
     params = 'coffee'
     result = {"S68.SI" => {name: 'SGX', amount: '15', change_amount: '+1', change_percent: '+3'}}
 
-    response = ApiHandler.get_price(params)
+    response = subject.get_price(params)
 
     expect(response).to eql(result)
   end
 
   it '#get_stat' do
     result = {'apple' => {'orange' => 'water', 'pear' => 'soda'}}
-    allow(ApiHandler).to receive(:get_breakdown).with("apple").and_return({'apple' => {'orange'=> 'water'}})
-    allow(ApiHandler).to receive(:get_news).with("apple").and_return({'apple' => {'pear' => 'soda'}})
+    allow_any_instance_of(ApiHelper).to receive(:get_breakdown).with("apple").and_return({'apple' => {'orange'=> 'water'}})
+    allow_any_instance_of(ApiHelper).to receive(:get_news).with("apple").and_return({'apple' => {'pear' => 'soda'}})
 
-    response = ApiHandler.get_stat('apple')
+    response = subject.get_stat('apple')
 
     expect(response).to eql(result)
   end
@@ -50,7 +59,7 @@ RSpec.describe('ApiHandler') do
     #TODO refactor
     allow_any_instance_of(Kernel).to receive_message_chain(:open, :read).and_return('SGX,S68.SI,15,123,456,x,-4 - +5,x,999')
 
-    response = ApiHandler.get_breakdown("S68.SI")
+    response = subject.get_breakdown("S68.SI")
 
     expect(response).to eql(result)
   end
@@ -66,7 +75,7 @@ RSpec.describe('ApiHandler') do
                                                                                       <pubDate>Tue, 06 Oct 2015 03:31:39 GMT</pubDate>
                                                                                      </item>')
 
-    response = ApiHandler.get_news(params)
+    response = subject.get_news(params)
 
     expect(response).to eql(result)
   end

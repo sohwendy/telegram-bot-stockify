@@ -1,5 +1,4 @@
 module FormatHelper
-
   def format(data)
     if respond_to?("format_#{data[:type]}")
       send("format_#{data[:type]}", data[:data])
@@ -8,7 +7,7 @@ module FormatHelper
 
   def format_list(data)
     result = ''
-    data.each { |key, value|
+    data.each_pair { |key, value|
       result << "#{key}    "
       result << "<b>#{value[:name]}</b>    "
       result << "#{value[:tag]}\n"
@@ -18,7 +17,7 @@ module FormatHelper
 
   def format_currency(data)
     result = ''
-    data.each { |_, value|
+    data.each_value { |value|
       result << "<i>#{value[:from_code]} 1 = "
       result << "#{value[:to_code]} #{value[:amount]} "
       result << "#{trend(value[:change_amount].to_f)}</i>\n\n"
@@ -28,7 +27,7 @@ module FormatHelper
 
   def format_price(data)
     result = ''
-    data.each { |key, value|
+    data.each_pair { |key, value|
       result << "#{key} "
       result << "<b>$#{value[:amount]}</b> "
       result << "#{trend(value[:change_amount].to_f)} "
@@ -41,7 +40,7 @@ module FormatHelper
 
   def format_stat(data)
     result = ''
-    data.each { |key, value|
+    data.each_pair { |key, value|
       result << "#{value[:name]} #{key.upcase}\n"
       result << print_spec(value)
       result << print_news(value[:news])

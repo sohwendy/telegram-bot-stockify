@@ -1,8 +1,15 @@
-require_relative '../src/formatter'
+require_relative '../src/format_helper'
+require 'byebug'
 
-RSpec.describe ('Formatter') do
+RSpec.describe ('FormatHelper') do
 
-  subject {Formatter}
+  subject {
+    class B
+      include FormatHelper
+    end
+
+    B.new
+  }
 
   it { is_expected.to respond_to(:format_currency)}
   it { is_expected.to respond_to(:format_stat)}
@@ -26,7 +33,7 @@ RSpec.describe ('Formatter') do
     value = hash[:data]['ABC']
     result = "<i>#{value[:from_code]} 1 = #{value[:to_code]} #{value[:amount]} \xF0\x9F\x93\x88</i>\n\n"
 
-    response = Formatter.format(hash)
+    response = subject.format(hash)
 
     expect(response).to eq(result)
   end
@@ -35,7 +42,7 @@ RSpec.describe ('Formatter') do
     hash = { type: 'list', data: { a: {name: 'apple', tag: 'fruits'}, b: {name: 'banana', tag: 'fruits'}}}
     result = "a    <b>apple</b>    fruits\nb    <b>banana</b>    fruits\n"
 
-    response = Formatter.format(hash)
+    response = subject.format(hash)
 
     expect(response).to eq(result)
   end
@@ -55,7 +62,7 @@ RSpec.describe ('Formatter') do
     value = hash[:data]['ABC']
     result = "#{hash[:data].keys.first} <b>$#{value[:amount]}</b> \xF0\x9F\x93\x89 #{value[:change_amount]}, #{value[:change_percent]}, #{value[:name]}\n"
 
-    response = Formatter.format(hash)
+    response = subject.format(hash)
 
     expect(response).to eq(result)
   end
@@ -87,7 +94,7 @@ RSpec.describe ('Formatter') do
       result << "[pe ratio]   <b>$#{value[:pe]}</b>\n"
       result << "[volume]     <b>#{value[:volume]}</b>\n\n"
 
-      response = Formatter.print_spec(value)
+      response = subject.print_spec(value)
 
       expect(response).to eq(result)
     end
@@ -96,14 +103,14 @@ RSpec.describe ('Formatter') do
       value = @hash[:data]['ABC']['news']
       result = "<a href='#{value[0][:url]}'>#{value[0][:title]}</a>\n#{value[0][:date]}\n\n"
 
-      response = Formatter.print_news(value)
+      response = subject.print_news(value)
 
       expect(response).to eq(result)
     end
 
     it '#format_stat' do
       result = "#{@hash[:data]['ABC'][:name]} #{@hash[:data].keys.first.upcase}\n"
-      response = Formatter.format(@hash)
+      response = subject.format(@hash)
 
       expect(response).to include(result)
     end
