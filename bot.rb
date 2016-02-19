@@ -14,8 +14,7 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
     begin
       logger.info("#{message.from.first_name} #{message.from.id}  says #{message.text}...")
       unless message.text
-        bot.api.send_message(chat_id: message.chat.id,
-                             text: INSTRUCTION)
+        bot.api.send_message(chat_id: message.chat.id, text: INSTRUCTION)
         return
       end
 
@@ -27,13 +26,11 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
       param = arg[1] && arg[1].match(/^[A-Za-z0-9.]+$/) ? arg[1] : nil
 
       unless COMMAND.include?(cmd)
-        return bot.api.send_message(chat_id: message.chat.id,
-                             text: "\xF0\x9F\x99\x88 \xF0\x9F\x99\x89 \xF0\x9F\x99\x8A #{arg[0]} not found")
+        return bot.api.send_message(chat_id: message.chat.id, text: invalid_command_reply(arg[0]))
       end
 
       if COMMAND[cmd] && param.nil?
-        return bot.api.send_message(chat_id: message.chat.id,
-                             text: "\xF0\x9F\x99\x85 #{arg[1]} not valid. only alphabet, number and . allowed")
+        return bot.api.send_message(chat_id: message.chat.id, text: invalid_param_reply(arg[1]))
       end
 
       case cmd
