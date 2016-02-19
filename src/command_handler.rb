@@ -14,8 +14,7 @@ class CommandHandler
   end
 
   def list(param)
-    list = @stock.get_list(param)
-    format(type: 'list', data: list)
+    format(type: 'list', data: @stock.get_list(param))
   end
 
   def charts(param)
@@ -33,10 +32,7 @@ class CommandHandler
 
   def rate(param)
     param = @currency.validate_and_format(param)
-    if param
-      data = get_currency(param)
-      result = format(type: 'currency', data: data) + get_preview(param.concat('=x'))
-    end
+    result = format(type: 'currency', data: get_currency(param)) + get_preview(param.concat('=x')) if param
     result
   end
 
@@ -45,21 +41,39 @@ class CommandHandler
     ticker_hash = @stock.get_from_symbol(param)
     get_chart(param)
     data = get_stat(param)
-    if data && data.values && !data.values.empty?
+    if data && !data.empty?
       data.each_key { |key| data[key].merge!(ticker_hash[key]) } unless ticker_hash.empty?
       result = format(type: 'stat', data: data)
     end
+
     result
   end
 
   def stock(param)
     ticker_hash = @stock.get_from_symbol(param)
-    ticker_hash = { param => {} } if ticker_hash.keys.empty?
+    ticker_hash = { param => { } } if ticker_hash.empty?
     data = get_price(ticker_hash.keys.first)
     unless data.empty?
       data = data.each_key { |key| data[key].merge!(ticker_hash[key]) }
       result = format(type: 'price', data: data)
     end
+
     result
+  end
+
+  def watch(param)
+
+  end
+
+  def unwatch(param)
+
+  end
+
+  def watch_list(param)
+
+  end
+
+  def watch_clear(param)
+
   end
 end
