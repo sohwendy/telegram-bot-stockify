@@ -1,4 +1,4 @@
-require_relative '../src/api_handler'
+require_relative '../src/api_helper'
 require 'csv'
 
 RSpec.describe('ApiHandler') do
