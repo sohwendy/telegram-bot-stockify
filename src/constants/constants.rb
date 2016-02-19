@@ -1,3 +1,5 @@
+TIMEOUT = 60 # 1 minute
+
 CHART_PATH = 'http://chart.finance.yahoo.com/z?'.freeze
 PRICE_PATH = 'http://download.finance.yahoo.com/d/quotes.csv?'.freeze
 NEWS_PATH = 'https://feeds.finance.yahoo.com/rss/2.0/headline?'.freeze
