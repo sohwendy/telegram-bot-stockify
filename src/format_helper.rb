@@ -1,12 +1,12 @@
-module Formatter
+module FormatHelper
 
-  def self.format(data)
-    if self.respond_to?("format_#{data[:type]}")
-      self.send("format_#{data[:type]}", data[:data])
+  def format(data)
+    if respond_to?("format_#{data[:type]}")
+      send("format_#{data[:type]}", data[:data])
     end
   end
 
-  def self.format_list(data)
+  def format_list(data)
     result = ''
     data.each { |key, value|
       result << "#{key}    "
@@ -16,7 +16,7 @@ module Formatter
     result
   end
 
-  def self.format_currency(data)
+  def format_currency(data)
     result = ''
     data.each { |_, value|
       result << "<i>#{value[:from_code]} 1 = "
@@ -26,7 +26,7 @@ module Formatter
     result
   end
 
-  def self.format_price(data)
+  def format_price(data)
     result = ''
     data.each { |key, value|
       result << "#{key} "
@@ -39,7 +39,7 @@ module Formatter
     result
   end
 
-  def self.format_stat(data)
+  def format_stat(data)
     result = ''
     data.each { |key, value|
       result << "#{value[:name]} #{key.upcase}\n"
@@ -50,7 +50,7 @@ module Formatter
   end
 
   # TODO: refactor this, inconsistent with other method
-  def self.print_spec(data)
+  def print_spec(data)
     result = ''
     result << "#{trend(data[:change_amount].to_f)}"
     result << "  <b>$#{data[:amount]}</b>  "
@@ -63,7 +63,7 @@ module Formatter
   end
 
   # TODO: refactor this, inconsistent with other method
-  def self.print_news(data)
+  def print_news(data)
     result = ''
     unless data.nil?
       data.each { |hash|
@@ -74,7 +74,7 @@ module Formatter
     result
   end
 
-  def self.trend(value)
+  def trend(value)
     if value > 0
       "\xF0\x9F\x93\x88"
     elsif value < 0

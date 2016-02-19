@@ -5,8 +5,7 @@ require 'uri'
 require 'date'
 require 'sanitize'
 
-class ApiHandler
-
+module ApiHelper
   FLAG = { 'NAME' => 'n',
             'SYMBOL' => 's',
             'LAST_TRADED_PRICE_ONLY' => 'l1',
@@ -21,7 +20,7 @@ class ApiHandler
   PRICE_FLAGS = FLAG['NAME']+FLAG['SYMBOL']+FLAG['LAST_TRADED_PRICE_ONLY']
   STAT_FLAGS = FLAG['NAME']+FLAG['SYMBOL']+FLAG['LAST_TRADED_PRICE_ONLY']+FLAG['PE']+FLAG['DIVIDEND']
 
-  def self.get_chart(params)
+  def get_chart(params)
     query = params.include?(',') ? "%5ESTI&c=#{params}" : params
 
     open(CHART_IMAGE_PATH, 'wb') do |file|
@@ -30,11 +29,11 @@ class ApiHandler
     true
   end
 
-  def self.get_preview(params)
+  def get_preview(params)
     "#{CHART_PATH}s=#{params}"
   end
 
-  def self.get_price(params)
+  def get_price(params)
     file = open("#{PRICE_PATH}s=#{params}&f=#{PRICE_FLAGS}.csv").read
     result = {}
     if file[/\d/] && !file.start_with?('N/A')
@@ -46,7 +45,7 @@ class ApiHandler
     result
   end
 
-  def self.get_stat(params)
+  def get_stat(params)
     breakdown = get_breakdown(params)
     news = get_news(params)
     if breakdown.empty?
@@ -57,7 +56,7 @@ class ApiHandler
     end
   end
 
-  def self.get_breakdown(params)
+  def get_breakdown(params)
     file = open("#{PRICE_PATH}s=#{params}&f=#{STAT_FLAGS}.csv").read
 
     result = {}
@@ -71,8 +70,7 @@ class ApiHandler
     result
   end
 
-
-  def self.get_news(params)
+  def get_news(params)
     doc = Nokogiri::XML(open("#{NEWS_PATH}s=#{params}&region=US&lang=en-US"))
 
     result = []
@@ -87,7 +85,7 @@ class ApiHandler
     { params => { news: result }}
   end
 
-  def self.get_currency(params)
+  def get_currency(params)
     file = open("#{PRICE_PATH}s=#{params}=x&f=#{PRICE_FLAGS}.csv").read
 
     result = {}

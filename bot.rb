@@ -2,10 +2,9 @@ require 'telegram/bot'
 require_relative 'src/constants/constants'
 require_relative 'src/constants/secrets'
 require_relative 'src/command_handler'
-require_relative 'src/formatter'
 
 logger = Logger.new(LOG_PATH, Logger::DEBUG)
-command = CommandHandler.new(logger)
+command = CommandHandler.new
 
 COMMAND = {'start' => false, 'help' => false, 'list' => false, 'stock' => true,
            'rate' => true, 'charts' => true, 'stat' => true}
@@ -13,7 +12,7 @@ COMMAND = {'start' => false, 'help' => false, 'list' => false, 'stock' => true,
 Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
   bot.listen do |message|
     begin
-      logger.info("#{message.from} says #{message.text}...")
+      logger.info("#{message.from.first_name} #{message.from.id}  says #{message.text}...")
       unless message.text
         bot.api.send_message(chat_id: message.chat.id,
                              text: INSTRUCTION)
@@ -27,7 +26,7 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
       cmd = arg[0] ? arg[0][1..-1] : nil
       param = arg[1] && arg[1].match(/^[A-Za-z0-9.]+$/) ? arg[1] : nil
 
-      if !COMMAND.include?(cmd)
+      unless COMMAND.include?(cmd)
         return bot.api.send_message(chat_id: message.chat.id,
                              text: "\xF0\x9F\x99\x88 \xF0\x9F\x99\x89 \xF0\x9F\x99\x8A #{arg[0]} not found")
       end
@@ -43,8 +42,7 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
                                text: INSTRUCTION)
 
         when 'list'
-          list = command.list(param)
-          result = Formatter.format({type: 'list', data: list})
+          result = command.list(param)
           bot.api.send_message(chat_id: message.chat.id,
                                text: result || negative_reply(message.from, param, cmd),
                                parse_mode: 'HTML')

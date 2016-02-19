@@ -1,3 +1,4 @@
 tmp/
+errors.log
 secrets.rb
 .idea/

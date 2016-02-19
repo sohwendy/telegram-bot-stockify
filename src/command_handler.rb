@@ -1,28 +1,31 @@
-require_relative 'api_handler'
 require_relative 'constants/constants'
 require_relative 'parser/stock_parser'
 require_relative 'parser/currency_parser'
-require_relative 'formatter'
+require_relative 'api_helper'
+require_relative 'format_helper'
 
 class CommandHandler
-  def initialize(param)
-    @logger = param
+  include FormatHelper
+  include ApiHelper
+
+  def initialize
     @currency = CurrencyParser.new(CURRENCY_PATH)
     @stock = StockParser.new(STOCK_PATH)
   end
 
   def list(param)
-    @stock.get_list(param)
+    list = @stock.get_list(param)
+    format({type: 'list', data: list})
   end
 
   def charts(param)
     ticker_hash = @stock.get_from_tags(param)
 
     if (ticker_hash && ticker_hash.length > 0)
-      ApiHandler.get_chart(ticker_hash.keys.join(','))
-      data = ApiHandler.get_price(ticker_hash.keys.join(','))
+      get_chart(ticker_hash.keys.join(','))
+      data = get_price(ticker_hash.keys.join(','))
       data.each_key { |key| data[key].merge!(ticker_hash[key]) }
-      result = Formatter.format({type: 'price', data: data})
+      result = format({type: 'price', data: data})
     end
 
     result
@@ -31,8 +34,8 @@ class CommandHandler
   def rate(param)
     param = @currency.validate_and_format(param)
     if param
-      data = ApiHandler.get_currency(param)
-      result = Formatter.format({type: 'currency', data: data}) + ApiHandler.get_preview(param.concat('=x'))
+      data = get_currency(param)
+      result = format({type: 'currency', data: data}) + get_preview(param.concat('=x'))
     end
     result
   end
@@ -40,11 +43,11 @@ class CommandHandler
   def stat(param)
     param.upcase!
     ticker_hash = @stock.get_from_symbol(param)
-    ApiHandler.get_chart(param)
-    data = ApiHandler.get_stat(param)
+    get_chart(param)
+    data = get_stat(param)
     if data && data.values && data.values.size > 0
       data.each_key { |key| data[key].merge!(ticker_hash[key]) } unless ticker_hash.empty?
-      result = Formatter.format({type: 'stat', data: data})
+      result = format({type: 'stat', data: data})
     end
     result
   end
@@ -54,10 +57,10 @@ class CommandHandler
     if (ticker_hash.keys.length == 0)
       ticker_hash = { param => {}}
     end
-    data = ApiHandler.get_price(ticker_hash.keys.first)
+    data = get_price(ticker_hash.keys.first)
     unless data.empty?
       data = data.each_key { |key| data[key].merge!(ticker_hash[key]) }
-      result = Formatter.format({type: 'price', data: data})
+      result = format({type: 'price', data: data})
     end
     result
   end
