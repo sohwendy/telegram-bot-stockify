@@ -44,3 +44,6 @@ $ ruby bot.rb
 `/charts <tag>`: (expert mode) depicts the graphical %change of some of the matching SG stocks and STI. (example: `/charts bank`)
 
 `/stat <ticker>`: (expert mode) provides details about the stock counter (example: `/stat GOOG`)
+
+##TODO
+1. Write test for new commands
