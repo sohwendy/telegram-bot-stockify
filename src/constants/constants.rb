@@ -17,9 +17,6 @@ LOG_PATH = './tmp/errors.log'.freeze
 class Emoji
   FACE_THROWING_A_KISS = "\xF0\x9F\x98\x98".freeze
   OK_HAND_SIGN = "\xF0\x9F\x91\x8C".freeze
-  BEAR_FACE = "\xF0\x9F\x90\xBB".freeze
-  COW_FACE = "\xF0\x9F\x90\xAE".freeze
-  SUNFLOWER = "\xF0\x9F\x8C\xBB".freeze
   CHART_WITH_UPWARDS_TREND = "\xF0\x9F\x93\x88".freeze
   CHART_WITH_DOWNWARDS_TREND = "\xF0\x9F\x93\x89".freeze
   FACE_WITH_NO_GOOD_GESTURE = "\xF0\x9F\x99\x85".freeze
