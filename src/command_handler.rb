@@ -67,42 +67,24 @@ class CommandHandler
     result
   end
 
-  def stocks(options = {})
-    param = options[:param]
-    ticker_hash = param.each_key { |key| @stock.get_from_symbol(key) || { key => {} } }
-    data = get_price(ticker_hash.keys.join(','))
-
-    unless data.empty?
-      data = data.each_key { |key| data[key].merge!(ticker_hash[key]) }
-      result = format(type: 'price', data: data)
-    end
-
-    result
-  end
-
   def watch(options = {})
-    p 'watching'
-    p user
-    p param
-    @watch.add(options[:user], options[:param])
+    result = @watch.add(options[:user], options[:param])
+    result[:status] + result[:param] ? I18n.t('watch_reply', param: result[:param]) : ''
   end
 
   def unwatch(options = {})
-    p 'unwatching'
-    p user
-    p param
-    @watch.remove(options[:user], options[:param])
-  end
-
-  def watch_list(options = {})
-    p 'watch list'
-    p user
-    @watch.list[options[:user]]
+    result = @watch.remove(options[:user], options[:param])
+    result[:status] + result[:param] ? I18n.t('watch_reply', param: result[:param]) : ''
   end
 
   def watch_clear(options = {})
-    p 'watch clear'
-    p user
-    @watch.remove(options[:user], options[:param])
+    result = @watch.clear(options[:user])
+    result[:status] + result[:param] ? result[:param] : ''
+  end
+
+  def watch_list(options = {})
+    list = @watch.list[options[:user]]
+    return I18n.t('watch_nothing_reply') if list.empty
+    I18n.t('watch_reply', param: list.joins(', '))
   end
 end

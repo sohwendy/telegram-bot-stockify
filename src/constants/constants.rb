@@ -16,6 +16,7 @@ LOG_PATH = './tmp/errors.log'.freeze
 # https://github.com/AxeLFFF/telegram-mems-bot/tree/master/telegram
 class Emoji
   FACE_THROWING_A_KISS = "\xF0\x9F\x98\x98".freeze
+  OK_HAND_SIGN = "\xF0\x9F\x91\x8C".freeze
   BEAR_FACE = "\xF0\x9F\x90\xBB".freeze
   COW_FACE = "\xF0\x9F\x90\xAE".freeze
   SUNFLOWER = "\xF0\x9F\x8C\xBB".freeze
@@ -54,11 +55,11 @@ COMMAND = { start:
             stat:
                     { valid_param: true, photo: true, msg: { parse_mode: 'HTML', disable_web_page_preview: true } },
             watch:
-                    { valid_param: true, authenticate: true, msg: { parse_mode: 'HTML' } },
+                    { valid_param: true, authenticate: true, msg: {} },
             unwatch:
-                    { valid_param: true, authenticate: true, msg: { parse_mode: 'HTML' } },
+                    { valid_param: true, authenticate: true, msg: {} },
             watch_clear:
-                    { valid_param: false, authenticate: true, msg: { parse_mode: 'HTML' } },
+                    { valid_param: false, authenticate: true, msg: {} },
             watch_list:
-                    { valid_param: false, authenticate: true, msg: { parse_mode: 'HTML' } }
+                    { valid_param: false, authenticate: true, msg: {} }
         }.freeze

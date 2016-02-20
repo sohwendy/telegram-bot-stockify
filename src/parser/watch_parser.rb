@@ -7,25 +7,36 @@ class WatchParser
   end
 
   def add_user(user)
-    @list[user] = [] if @list.size < WATCH_USERS_LIMIT && !@list.key?(user)
-    write
+    if @list.size < WATCH_USERS_LIMIT && !@list.key?(user)
+      @list[user] = []
+      write
+      return true
+    end
+    nil
   end
 
   def add(user, param)
-    @list[user].push(param) if @list.key?(user) && list[user].size < WATCH_STOCKS_LIMIT
-    p 'added', @list
+    return { status: 'not allowed' } unless @list.key?(user)
+    return { status: 'max 10 can be added' } if list[user].size >= WATCH_STOCKS_LIMIT
+    @list[user].unshift(param).uniq!
     write
+    { status: 'Done', param: @list[user].join(', ') }
   end
 
   def remove(user, param)
-    return unless @list.key?(user)
-    if param
-      @list[user].delete(param)
-    else
-      @list[user].clear
-    end
-    p 'removed', @list
+    return { status: 'not allowed' } unless @list.key?(user)
+
+    @list[user].delete(param)
     write
+    { status: 'Done', param: @list[user].join(', ') }
+  end
+
+  def clear(user)
+    return { status: 'not allowed' } unless @list.key?(user)
+
+    @list[user].clear
+    write
+    { status: 'Done', param: I18n.t('watch_nothin_reply') }
   end
 
   def list
