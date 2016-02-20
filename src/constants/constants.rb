@@ -1,10 +1,13 @@
 TIMEOUT = 60 # 1 minute
+WATCH_USERS_LIMIT = 5
+WATCH_STOCKS_LIMIT = 10
 
 CHART_PATH = 'http://chart.finance.yahoo.com/z?'.freeze
 PRICE_PATH = 'http://download.finance.yahoo.com/d/quotes.csv?'.freeze
 NEWS_PATH = 'https://feeds.finance.yahoo.com/rss/2.0/headline?'.freeze
 CURRENCY_PATH = './data/currency.csv'.freeze
 STOCK_PATH = './data/stock.csv'.freeze
+WATCH_PATH = './data/watch.yaml'.freeze
 CHART_IMAGE_PATH = './tmp/chart.jpg'.freeze
 LOG_PATH = './tmp/errors.log'.freeze
 
@@ -15,6 +18,7 @@ class Emoji
   FACE_THROWING_A_KISS = "\xF0\x9F\x98\x98".freeze
   BEAR_FACE = "\xF0\x9F\x90\xBB".freeze
   COW_FACE = "\xF0\x9F\x90\xAE".freeze
+  SUNFLOWER = "\xF0\x9F\x8C\xBB".freeze
   CHART_WITH_UPWARDS_TREND = "\xF0\x9F\x93\x88".freeze
   CHART_WITH_DOWNWARDS_TREND = "\xF0\x9F\x93\x89".freeze
   FACE_WITH_NO_GOOD_GESTURE = "\xF0\x9F\x99\x85".freeze

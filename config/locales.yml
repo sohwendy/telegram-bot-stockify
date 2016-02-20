@@ -10,7 +10,7 @@ en:
     /stat - (expert mode) provides details about the stock counter /stat GOOG
   welcome_reply: "hi, %{name} %{emoji}"
   negative_reply: "sorry %{name}, i cant find [%{param}] in /%{cmd}"
-  exception_log: "killed by %{name} %{id} %{msg}:\n %{e}\n"
+  exception_log: "killed by %{name} %{id} %{msg} %{e}\n"
   invalid_command_reply: "%{emoji} %{msg} not found"
   invalid_param_reply: "%{emoji} %{msg} not valid. type only alphabet, number and ."
 
