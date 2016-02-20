@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = 'telegram-bot-kabushiki'
-  spec.version       = 0.01
+  spec.version       = 0.02
   spec.authors       = ['Wendy Soh']
   spec.email         = ['sohwendy@gmail.com']
   spec.summary       = %q{ a stock market telegram bot.}
