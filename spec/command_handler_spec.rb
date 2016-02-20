@@ -20,14 +20,14 @@ RSpec.describe 'CommandHandler' do
     result = "D05.SI    <b>DBS Bank</b>    Finance\nO39.SI    <b>OCBC Bank</b>    Finance\n"\
              "U11.SI    <b>UOB Bank</b>    Finance\nK71U.SI    <b>Keppel Reit</b>    REIT\n"\
              "D5IU.SI    <b>Lippo Malls Trust</b>    REIT\n"
-    response = subject.list('')
+    response = subject.list(param: '')
     expect(response).to eql(result)
   end
 
   context '#charts' do
     it 'returns nil' do
-      expect(subject.charts('S68.SI')).to eql(nil)
-      expect(subject.charts('Singapore')).to eql(nil)
+      expect(subject.charts(param: 'S68.SI')).to eql(nil)
+      expect(subject.charts(param: 'Singapore')).to eql(nil)
       # expect(subject.charts('')). eql(nil) #handled by bot level
     end
 
@@ -40,16 +40,16 @@ RSpec.describe 'CommandHandler' do
         .with(@header)
         .to_return(status: 200, body: File.open('spec/data/charts_finance.txt'), headers: {})
 
-      expect(subject.charts('finance')).to eql(result)
+      expect(subject.charts(param: 'finance')).to eql(result)
     end
   end
 
   context '#rate' do
     it 'returns nil' do
-      expect(subject.rate('')).to eql(nil)
-      expect(subject.rate('yrs')).to eql(nil)
-      expect(subject.rate('abcde')).to eql(nil)
-      expect(subject.rate('abcdef')).to eql(nil)
+      expect(subject.rate(param: '')).to eql(nil)
+      expect(subject.rate(param: 'yrs')).to eql(nil)
+      expect(subject.rate(param: 'abcde')).to eql(nil)
+      expect(subject.rate(param: 'abcdef')).to eql(nil)
     end
 
     it 'returns result for usdcny' do
@@ -59,7 +59,7 @@ RSpec.describe 'CommandHandler' do
         .with(@header)
         .to_return(status: 200, body: File.open('spec/data/rate_valid_long.txt'), headers: {})
 
-      expect(subject.rate(param)).to eql(result)
+      expect(subject.rate(param: param)).to eql(result)
     end
 
     it 'returns results for usd' do
@@ -69,7 +69,7 @@ RSpec.describe 'CommandHandler' do
         .with(@header)
         .to_return(status: 200, body: File.open('spec/data/rate_valid_short.txt'), headers: {})
 
-      expect(subject.rate('usd')).to eql(result)
+      expect(subject.rate(param: 'usd')).to eql(result)
     end
   end
 
@@ -84,7 +84,7 @@ RSpec.describe 'CommandHandler' do
         .with(@header)
         .to_return(status: 200, body: File.open('spec/data/news_invalid.txt'), headers: {})
 
-      expect(subject.stat(param)).to eql(nil)
+      expect(subject.stat(param: param)).to eql(nil)
     end
 
     it 'returns data for existing symbol' do
@@ -100,7 +100,7 @@ RSpec.describe 'CommandHandler' do
         .with(@header)
         .to_return(status: 200, body: File.open('spec/data/news_valid.txt'), headers: {})
 
-      expect(subject.stat(param)).to eql(result)
+      expect(subject.stat(param: param)).to eql(result)
     end
 
     it 'returns data for predefined symbol' do
@@ -116,7 +116,7 @@ RSpec.describe 'CommandHandler' do
         .with(@header)
         .to_return(status: 200, body: File.open('spec/data/news_valid.txt'), headers: {})
 
-      expect(subject.stat(param)).to eql(result)
+      expect(subject.stat(param: param)).to eql(result)
     end
   end
 
@@ -128,7 +128,7 @@ RSpec.describe 'CommandHandler' do
         .with(@header)
         .to_return(status: 200, body: File.open("spec/data/stock_#{param}.txt"), headers: {})
 
-      expect(subject.stock(param)).to eql(nil)
+      expect(subject.stock(param: param)).to eql(nil)
     end
 
     it 'returns data for existing symbol' do
@@ -138,7 +138,7 @@ RSpec.describe 'CommandHandler' do
         .with(@header)
         .to_return(status: 200, body: File.open('spec/data/stock_predefined.txt'), headers: {})
 
-      expect(subject.stock(param)).to eql(result)
+      expect(subject.stock(param: param)).to eql(result)
     end
 
     it 'returns data for predefined symbol' do
@@ -148,7 +148,7 @@ RSpec.describe 'CommandHandler' do
         .with(@header)
         .to_return(status: 200, body: File.open('spec/data/stock_dynamic.txt'), headers: {})
 
-      expect(subject.stock(param)).to eql(result)
+      expect(subject.stock(param: param)).to eql(result)
     end
   end
 end
