@@ -1,5 +1,6 @@
-tmp/
+secrets.rb
+watch.yaml
 errors.log
 .byebug_history
-secrets.rb
+tmp/
 .idea/
