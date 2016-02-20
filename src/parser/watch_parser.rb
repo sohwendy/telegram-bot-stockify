@@ -18,7 +18,7 @@ class WatchParser
   def add(user, param)
     return { status: 'not allowed' } unless @list.key?(user)
     return { status: 'max 10 can be added' } if list[user].size >= WATCH_STOCKS_LIMIT
-    @list[user].unshift(param).uniq!
+    @list[user].unshift(param.downcase).uniq!
     write
     { status: 'Done', param: @list[user].join(', ') }
   end
@@ -36,7 +36,7 @@ class WatchParser
 
     @list[user].clear
     write
-    { status: 'Done', param: I18n.t('watch_nothin_reply') }
+    { status: 'Done', param: I18n.t('watch_nothing_reply') }
   end
 
   def list

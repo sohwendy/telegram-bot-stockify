@@ -17,6 +17,9 @@ Style/UnneededInterpolation:
 Style/TrivialAccessors:
   Exclude:
     - 'src/parser/watch_parser.rb'
+Style/RedundantReturn:
+  Exclude:
+    - 'src/command_handler.rb'
 
 Metrics/LineLength:
   Max: 120

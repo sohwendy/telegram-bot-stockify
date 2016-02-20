@@ -69,22 +69,22 @@ class CommandHandler
 
   def watch(options = {})
     result = @watch.add(options[:user], options[:param])
-    result[:status] + result[:param] ? I18n.t('watch_reply', param: result[:param]) : ''
+    return result[:status] + result[:param] ? I18n.t('watch_reply', param: result[:param]) : ''
   end
 
   def unwatch(options = {})
     result = @watch.remove(options[:user], options[:param])
-    result[:status] + result[:param] ? I18n.t('watch_reply', param: result[:param]) : ''
+    return result[:status] + result[:param] ? I18n.t('watch_reply', param: result[:param]) : ''
   end
 
   def watch_clear(options = {})
     result = @watch.clear(options[:user])
-    result[:status] + result[:param] ? result[:param] : ''
+    return result[:status] + result[:param] ? result[:param] : ''
   end
 
   def watch_list(options = {})
     list = @watch.list[options[:user]]
-    return I18n.t('watch_nothing_reply') if list.empty
-    I18n.t('watch_reply', param: list.joins(', '))
+    return I18n.t('watch_nothing_reply') if list.empty?
+    I18n.t('watch_reply', param: list.join(', '))
   end
 end
