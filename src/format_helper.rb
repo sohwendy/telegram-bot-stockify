@@ -21,7 +21,7 @@ module FormatHelper
     data.each_value do |value|
       result << "<i>#{value[:from_code]} 1 = "
       result << "#{value[:to_code]} #{value[:amount]} "
-      result << "#{trend(value[:change_amount].to_f)}</i>\n\n"
+      result << "#{Emoji.trend(value[:change_amount].to_f)}</i>\n\n"
     end
     result
   end
@@ -31,7 +31,7 @@ module FormatHelper
     data.each_pair do |key, value|
       result << "#{key} "
       result << "<b>$#{value[:amount]}</b> "
-      result << "#{trend(value[:change_amount].to_f)} "
+      result << "#{Emoji.trend(value[:change_amount].to_f)} "
       result << "#{value[:change_amount]}, "
       result << "#{value[:change_percent]}, "
       result << "#{value[:name]}\n"
@@ -52,7 +52,7 @@ module FormatHelper
   # TODO: refactor this, inconsistent with other method
   def print_spec(data)
     result = ''
-    result << "#{trend(data[:change_amount].to_f)}"
+    result << "#{Emoji.trend(data[:change_amount].to_f)}"
     result << "  <b>$#{data[:amount]}</b>  #{data[:change_amount]}  #{data[:change_percent]}\n"
     result << "[dividend]   <b>$#{data[:dividend]}</b>\n"
     result << "[pe ratio]   <b>$#{data[:pe]}</b>\n"
@@ -70,15 +70,5 @@ module FormatHelper
       end
     end
     result
-  end
-
-  def trend(value)
-    if value > 0
-      Emoji::CHART_WITH_UPWARDS_TREND
-    elsif value < 0
-      Emoji::CHART_WITH_DOWNWARDS_TREND
-    else
-      Emoji::HEAVY_MINUS_SIGN
-    end
   end
 end

@@ -2,14 +2,18 @@ AllCops:
   Exclude:
     - telegram-bot-kabushiki.gemspec
     - 'spec/spec_helper.rb'
+
 Documentation:
   Enabled: false
-
-Metrics/LineLength:
-  Max: 120
+Lint/NonLocalExitFromIterator:
+  Enabled: false
+Lint/RescueException:
+  Enabled: false
 Style/NumericLiterals:
   Enabled: false
-
 Style/UnneededInterpolation:
   Exclude:
     - 'src/format_helper.rb'
+
+Metrics/LineLength:
+  Max: 120

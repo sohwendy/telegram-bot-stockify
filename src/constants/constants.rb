@@ -8,34 +8,6 @@ STOCK_PATH = './data/stock.csv'.freeze
 CHART_IMAGE_PATH = './tmp/chart.jpg'.freeze
 LOG_PATH = './tmp/errors.log'.freeze
 
-INSTRUCTION = "i fetch finance data from yahoo \n
-Commands:
-/list - gives stocks available in this bot
-/rate - get currency rate and chart using 3-digit currency code /rate usdeur
-/stock - states the last traded price of *one* stock counter /stock Z78.SI
-/charts - (expert mode) depicts the graphical %change of some of the matching SG stocks and STI /charts bank
-/stat - (expert mode) provides details about the stock counter /stat GOOG".freeze
-
-def welcome_reply(caller)
-  "hi, #{caller.first_name} #{Emoji::FACE_THROWING_A_KISS}"
-end
-
-def negative_reply(caller, param, cmd)
-  "sorry #{caller.first_name}, i cant find [#{param}] in /#{cmd}"
-end
-
-def exception_log(caller, msg, e)
-  "killed by #{caller.first_name} #{caller.id} #{msg}:\n #{e}\n"
-end
-
-def invalid_command_reply(msg)
-  "#{Emoji::SEE_NO_EVIL_MONKEY} #{Emoji::HEAR_NO_EVIL_MONKEY} #{Emoji::SPEAK_NO_EVIL_MONKEY}  #{msg} not found"
-end
-
-def invalid_param_reply(msg)
-  "#{Emoji::FACE_WITH_NO_GOOD_GESTURE} #{msg} not valid. only alphabet, number and . allowed"
-end
-
 # Refer to the links for more emoji
 # http://apps.timwhitlock.info/emoji/tables/unicode
 # https://github.com/AxeLFFF/telegram-mems-bot/tree/master/telegram
@@ -50,8 +22,18 @@ class Emoji
   SEE_NO_EVIL_MONKEY = "\xF0\x9F\x99\x88".freeze
   HEAR_NO_EVIL_MONKEY = "\xF0\x9F\x99\x89".freeze
   SPEAK_NO_EVIL_MONKEY = "\xF0\x9F\x99\x8A".freeze
-end
+  MONKEYS = SEE_NO_EVIL_MONKEY + HEAR_NO_EVIL_MONKEY + SPEAK_NO_EVIL_MONKEY
 
+  def self.trend(value)
+    if value > 0
+      CHART_WITH_UPWARDS_TREND
+    elsif value < 0
+      CHART_WITH_DOWNWARDS_TREND
+    else
+      HEAVY_MINUS_SIGN
+    end
+  end
+end
 
 COMMAND = { start:
                     { valid_param: false },
@@ -66,7 +48,7 @@ COMMAND = { start:
             charts:
                     { valid_param: true, photo: true, msg: { parse_mode: 'HTML' } },
             stat:
-                    { valid_param: true, photo: true, msg: { parse_mode: 'HTML' , disable_web_page_preview: true} },
+                    { valid_param: true, photo: true, msg: { parse_mode: 'HTML', disable_web_page_preview: true } },
             watch:
                     { valid_param: true, authenticate: true, msg: { parse_mode: 'HTML' } },
             unwatch:

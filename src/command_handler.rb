@@ -51,7 +51,7 @@ class CommandHandler
 
   def stock(param)
     ticker_hash = @stock.get_from_symbol(param)
-    ticker_hash = { param => { } } if ticker_hash.empty?
+    ticker_hash = { param => {} } if ticker_hash.empty?
     data = get_price(ticker_hash.keys.first)
     unless data.empty?
       data = data.each_key { |key| data[key].merge!(ticker_hash[key]) }
@@ -62,18 +62,14 @@ class CommandHandler
   end
 
   def watch(param)
-
   end
 
   def unwatch(param)
-
   end
 
   def watch_list(param)
-
   end
 
   def watch_clear(param)
-
   end
 end
