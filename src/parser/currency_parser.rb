@@ -14,9 +14,9 @@ class CurrencyParser
     param.downcase!
     case param.length
     when 3
-      return @code_hash.keys.include?(param.slice(0, 3)) ? param.concat('sgd') : nil
+      return @code_hash.key?(param.slice(0, 3)) ? param.concat('sgd') : nil
     when 6
-      return @code_hash.keys.include?(param.slice(0, 3)) && @code_hash.keys.include?(param.slice(3, 6)) ? param : nil
+      return @code_hash.key?(param.slice(0, 3)) && @code_hash.key?(param.slice(3, 6)) ? param : nil
     end
     nil
   end

@@ -14,7 +14,7 @@ I18n.backend.load_translations
 Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
   bot.listen do |message|
     begin
-      logger.info("#{message.from.first_name} #{message.from.id} says #{message.text}...")
+      logger.info("#{message.from.first_name} of #{message.from.id},#{message.chat.id} says #{message.text}...")
 
       # process the params
       arg = message.text.split(' ')
@@ -31,7 +31,7 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
         return
       end
 
-      unless COMMAND.keys.include?(cmd.to_sym)
+      unless COMMAND.key?(cmd.to_sym)
         bot.api.send_message(chat_id: message.chat.id,
                              text: I18n.t('invalid_command_reply',
                                           emoji: Emoji::FACE_WITH_NO_GOOD_GESTURE,
@@ -42,7 +42,7 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
       if COMMAND.dig(cmd.to_sym, :valid_param) && param.nil?
         bot.api.send_message(chat_id: message.chat.id,
                              text: I18n.t('invalid_param_reply', name: name, emoji: Emoji::MONKEYS, msg: arg[1]))
-        retrun
+        return
       end
 
       # grab data from api
@@ -54,8 +54,8 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
         bot.api.send_message(chat_id: message.chat.id,
                              text: I18n.t('welcome_reply', name: name, emoji: Emoji::FACE_THROWING_A_KISS))
       else
-        if command.respond_to?(cmd, param)
-          result = command.send(cmd, param)
+        if command.respond_to?(cmd, param: param, user: message.chat.id)
+          result = command.send(cmd, param: param, user: message.chat.id)
 
           if result && COMMAND.dig(cmd.to_sym, :photo)
             bot.api.send_photo(chat_id: message.chat.id, photo: File.new(CHART_IMAGE_PATH))

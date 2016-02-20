@@ -14,6 +14,9 @@ Style/NumericLiterals:
 Style/UnneededInterpolation:
   Exclude:
     - 'src/format_helper.rb'
+Style/TrivialAccessors:
+  Exclude:
+    - 'src/parser/watch_parser.rb'
 
 Metrics/LineLength:
   Max: 120
