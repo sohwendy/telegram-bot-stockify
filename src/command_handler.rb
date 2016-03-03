@@ -40,8 +40,6 @@ class CommandHandler
   end
 
   def stat(options = {})
-    # param = options[:param].upcase
-    # ticker_hash = @stock.get_from_symbol(param)
     ticker_hash = @stock.get_from_symbol(options[:param])
     get_chart(options[:param])
     data = get_stat(options[:param])
