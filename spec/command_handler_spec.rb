@@ -11,7 +11,6 @@ RSpec.describe 'CommandHandler' do
                            'User-Agent' => 'Ruby'
                          }
               }
-    stub_const('CURRENCY_PATH', 'spec/data/currency.csv')
     stub_const('STOCK_PATH', 'spec/data/stock.csv')
     stub_const('CHART_IMAGE_PATH', 'spec/data/tmp.jpg')
   end
@@ -41,35 +40,6 @@ RSpec.describe 'CommandHandler' do
         .to_return(status: 200, body: File.open('spec/data/charts_finance.txt'), headers: {})
 
       expect(subject.charts(param: 'finance')).to eql(result)
-    end
-  end
-
-  context '#rate' do
-    it 'returns nil' do
-      expect(subject.rate(param: '')).to eql(nil)
-      expect(subject.rate(param: 'yrs')).to eql(nil)
-      expect(subject.rate(param: 'abcde')).to eql(nil)
-      expect(subject.rate(param: 'abcdef')).to eql(nil)
-    end
-
-    it 'returns result for usdcny' do
-      param = 'usdcny'
-      result = "<i>USD 1 = CNY 6.5793 📉</i>\n\n#{CHART_PATH}s=#{param}=x"
-      stub_request(:get, "#{PRICE_PATH}f=nsl1.csv&s=#{param}=x")
-        .with(@header)
-        .to_return(status: 200, body: File.open('spec/data/rate_valid_long.txt'), headers: {})
-
-      expect(subject.rate(param: param)).to eql(result)
-    end
-
-    it 'returns results for usd' do
-      param = 'usdsgd'
-      result = "<i>USD 1 = SGD 1.888 📉</i>\n\n#{CHART_PATH}s=#{param}=x"
-      stub_request(:get, "#{PRICE_PATH}f=nsl1.csv&s=#{param}=x")
-        .with(@header)
-        .to_return(status: 200, body: File.open('spec/data/rate_valid_short.txt'), headers: {})
-
-      expect(subject.rate(param: 'usd')).to eql(result)
     end
   end
 

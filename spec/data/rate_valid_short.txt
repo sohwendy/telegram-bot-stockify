@@ -1,1 +1,0 @@
-"USD/SGD","usdsgd=x",1.888,N/A,-0.00188,"usdsgd=x",0

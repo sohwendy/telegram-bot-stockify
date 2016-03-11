@@ -10,7 +10,6 @@ class CommandHandler
   include ApiHelper
 
   def initialize
-    @currency = CurrencyParser.new(CURRENCY_PATH)
     @stock = StockParser.new(STOCK_PATH)
     @watch = WatchParser.new(WATCH_PATH)
   end
@@ -30,12 +29,6 @@ class CommandHandler
       result = format(type: 'price', data: data)
     end
 
-    result
-  end
-
-  def rate(options = {})
-    param = @currency.validate_and_format(options[:param])
-    result = format(type: 'currency', data: get_currency(param)) + get_preview(param.concat('=x')) if param
     result
   end
 

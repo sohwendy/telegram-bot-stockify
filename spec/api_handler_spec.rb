@@ -12,13 +12,9 @@ RSpec.describe 'ApiHelper' do
   end
 
   before(:each) do
-    stub_const('CHART_PATH', 'url/')
     stub_const('PRICE_FLAGS', '110')
     stub_const('STAT_FLAGS', '001')
     stub_const('NEWS_PATH', 'news/')
-    stub_const('CHART_IMAGE_PATH', 'tmp/test_image.jpg')
-    # TODO: refactor this
-    allow(OpenURI).to receive(:open).with(CHART_PATH, 'wb').and_return('chart')
   end
 
   it '#get_chart'

@@ -5,13 +5,10 @@ TIMEOUT = 60 # 1 minute
 WATCH_USERS_LIMIT = 5
 WATCH_STOCKS_LIMIT = 10
 
-CHART_PATH = 'http://chart.finance.yahoo.com/z?'.freeze
 PRICE_PATH = 'http://download.finance.yahoo.com/d/quotes.csv?'.freeze
 NEWS_PATH = 'https://feeds.finance.yahoo.com/rss/2.0/headline?'.freeze
-CURRENCY_PATH = './data/currency.csv'.freeze
 STOCK_PATH = './data/stock.csv'.freeze
 WATCH_PATH = './data/watch.yaml'.freeze
-CHART_IMAGE_PATH = './tmp/chart.jpg'.freeze
 LOG_PATH = './tmp/errors.log'.freeze
 
 # Refer to the links for more emoji
@@ -45,15 +42,13 @@ COMMAND = { start:
             help:
                     { valid_param: false },
             list:
-                    { valid_param: false, msg: { parse_mode: 'HTML' } },
-            stock:
-                    { valid_param: true, msg: { parse_mode: 'HTML' } },
-            rate:
-                    { valid_param: true, msg: { parse_mode: 'HTML' } },
-            charts:
-                    { valid_param: true, photo: true, msg: { parse_mode: 'HTML' } },
+                    { valid_param: false, msg: {} },
             stat:
                     { valid_param: true, photo: true, msg: { parse_mode: 'HTML', disable_web_page_preview: true } },
+            subscribe:
+                    { valid_param: false },
+            unsubscribe:
+                    { valid_param: false },
             watch:
                     { valid_param: true, authenticate: true, msg: {} },
             unwatch:

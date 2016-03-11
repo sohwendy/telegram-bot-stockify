@@ -10,31 +10,11 @@ RSpec.describe 'FormatHelper' do
     B.new
   end
 
-  it { is_expected.to respond_to(:format_currency) }
   it { is_expected.to respond_to(:format_stat) }
   it { is_expected.to respond_to(:format_list) }
   it { is_expected.to respond_to(:format_price) }
   it { is_expected.to respond_to(:print_news) }
   it { is_expected.to respond_to(:print_spec) }
-
-  it '#format_currency' do
-    hash = { type: 'currency',
-             data: { 'ABC' => { to_code: 'BBB',
-                                from_code: 'CCC',
-                                amount: 55.44,
-                                change_amount: 4
-                               }
-                   }
-          }
-
-    value = hash[:data]['ABC']
-    result = "<i>#{value[:from_code]} 1 = #{value[:to_code]} #{value[:amount]} "\
-             "#{Emoji::CHART_WITH_UPWARDS_TREND}</i>\n\n"
-
-    response = subject.format(hash)
-
-    expect(response).to eq(result)
-  end
 
   it '#format_list' do
     hash = { type: 'list', data: { a: { name: 'apple', tag: 'fruits' }, b: { name: 'banana', tag: 'fruits' } } }
