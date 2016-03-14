@@ -1,14 +1,9 @@
-require 'i18n'
 require 'telegram/bot'
-require_relative 'src/constants/constants'
-require_relative 'src/command_handler'
+require_relative 'src/constants'
+require_relative 'src/watch_handler'
 
-logger = Logger.new(LOG_PATH, Logger::DEBUG)
-command = CommandHandler.new
-
-I18n.load_path = Dir['config/locales.yml']
-I18n.locale = :en
-I18n.backend.load_translations
+logger = Logger.new(STDOUT)
+watch = WatchHandler.new(WATCH_PATH)
 
 Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
   bot.listen do |message|
@@ -23,50 +18,31 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
       name = message.from.first_name
 
       # validation
-      return if DateTime.now.to_time.to_i - message.date > TIMEOUT
-
-      unless message.text
-        bot.api.send_message(chat_id: message.chat.id, text: I18n.t('instruction'))
-        return
-      end
-
-      unless COMMAND.key?(cmd.to_sym)
+      if DateTime.now.to_time.to_i - message.date > TIMEOUT
+      elsif !message.text
+        bot.api.send_message(chat_id: message.chat.id, text: Reply::INSTRUCTION)
+      elsif !COMMAND.key?(cmd.to_sym)
         bot.api.send_message(chat_id: message.chat.id,
-                             text: I18n.t('invalid_command_reply',
-                                          emoji: Emoji::FACE_WITH_NO_GOOD_GESTURE,
-                                          msg: arg[0]))
-        return
-      end
+                             text: Reply.invalid_command(Emoji::FACE_WITH_NO_GOOD_GESTURE, arg[0]))
+        bot.api.send_message(chat_id: message.chat.id, text: Reply::INSTRUCTION)
+      elsif COMMAND.dig(cmd.to_sym, :valid_param) && param.nil?
+        bot.api.send_message(chat_id: message.chat.id,
+                             text: Reply.invalid_param(Emoji::MONKEYS, arg[1]))
+        bot.api.send_message(chat_id: message.chat.id, text: Reply::INSTRUCTION)
+      elsif cmd == 'start'
+        bot.api.send_message(chat_id: message.chat.id, text: Reply::OBJECTIVE + '\n' + Reply::INSTRUCTION)
+      elsif watch.respond_to?(cmd, param: param, user: message.chat.id)
+        result = watch.send(cmd, param: param, user: message.chat.id)
 
-      if COMMAND.dig(cmd.to_sym, :valid_param) && param.nil?
         bot.api.send_message(chat_id: message.chat.id,
-                             text: I18n.t('invalid_param_reply', name: name, emoji: Emoji::MONKEYS, msg: arg[1]))
-        return
-      end
-
-      # grab data from api
-      case cmd
-      when 'help'
-        bot.api.send_message(chat_id: message.chat.id,
-                             text: I18n.t('instruction'))
-      when 'start'
-        bot.api.send_message(chat_id: message.chat.id,
-                             text: I18n.t('welcome_reply', name: name, emoji: Emoji::FACE_THROWING_A_KISS))
+                             text: result || Reply.negative(name, param, cmd),
+                             **COMMAND.dig(cmd.to_sym, :msg))
+        bot.api.send_message(chat_id: message.chat.id, text: Reply::INSTRUCTION) unless result
       else
-        if command.respond_to?(cmd, param: param, user: message.chat.id)
-          result = command.send(cmd, param: param, user: message.chat.id)
-
-          if result && COMMAND.dig(cmd.to_sym, :photo)
-            bot.api.send_photo(chat_id: message.chat.id, photo: File.new(CHART_IMAGE_PATH))
-          end
-
-          bot.api.send_message(chat_id: message.chat.id,
-                               text: result || I18n.t('negative_reply', name: name, param: param, cmd: cmd),
-                               **COMMAND.dig(cmd.to_sym, :msg))
-        end
+        bot.api.send_message(chat_id: message.chat.id, text: Reply::INSTRUCTION)
       end
     rescue Exception => e
-      logger.fatal(I18n.t('exception_log', name: message.from.first_name, id: message.from.id, msg: message.text, e: e))
+      logger.fatal(Reply.exception(message.from.first_name, message.from.id, message.text, e))
     end
   end
 end

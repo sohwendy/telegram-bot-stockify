@@ -1,24 +1,27 @@
 require 'telegram/bot'
-require './src/constants/constants'
-require './src/constants/secrets'
-require './src/command_handler'
+require './src/constants'
+require './src/watch_handler'
 
 namespace :bot do
   desc 'send stock info'
   task :push do
     Telegram::Bot::Client.run(TOKEN) do |bot|
-      command = CommandHandler.new
-
-      WatchParser.new(WATCH_PATH).list.each_pair do |key, value|
-        param = value.map { |val| command.stock(param: val) }
-        if param
-          result = "you are receiving auto notification \n\n"
-          result << param.join('')
-        else
-          result = "you are not watching any stock\n"
+      watch = WatchHandler.new(WATCH_PATH)
+      time = Time.now.strftime('%l:%M%P %e-%b')
+      subscribers = watch.notify
+      if subscribers && !subscribers.empty?
+        subscribers.each_pair do |key, value|
+          if value
+            result = "#{Emoji::FOUR_LEAF_CLOVER} you are receiving auto notification #{time}\n\n"
+            result << value
+          else
+            result = "#{Emoji::FOUR_LEAF_CLOVER} you are not watching any stock #{time}\n\n"
+          end
+          result << '/help for more info'
+          bot.api.send_message(chat_id: key, text: result)
         end
-        result << "\n refer to /help for instruction on watching"
-        bot.api.send_message(chat_id: key, text: result, parse_mode: 'HTML')
+      else
+        p 'no subscriber'
       end
     end
   end

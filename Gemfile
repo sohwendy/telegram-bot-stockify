@@ -5,7 +5,6 @@ gem 'nokogiri'
 gem 'sanitize'
 gem 'whenever', require: false
 gem 'rake'
-gem 'i18n'
 
 group :development, :test do
   gem 'webmock'

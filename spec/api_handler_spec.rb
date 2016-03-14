@@ -17,16 +17,6 @@ RSpec.describe 'ApiHelper' do
     stub_const('NEWS_PATH', 'news/')
   end
 
-  it '#get_chart'
-
-  it '#get_preview' do
-    params = 'coffee'
-
-    response = subject.get_preview(params)
-
-    expect(response).to eql("#{CHART_PATH}s=#{params}")
-  end
-
   it '#get_price' do
     # TODO: refactor
     allow_any_instance_of(Kernel).to receive_message_chain(:open, :read).and_return('SGX,S68.SI,15,x,+1 - +3')

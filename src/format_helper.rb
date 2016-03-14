@@ -1,29 +1,14 @@
-require_relative 'constants/constants'
+require_relative 'constants'
 
 module FormatHelper
-  def format(data)
-    return unless respond_to?("format_#{data[:type]}")
-    send("format_#{data[:type]}", data[:data])
-  end
-
-  def format_list(data)
-    result = ''
-    data.each_pair do |key, value|
-      result << "#{key}    "
-      result << "#{value[:name]}    "
-      result << "#{value[:tag]}\n"
-    end
-    result
-  end
-
   def format_price(data)
     result = ''
     data.each_pair do |key, value|
-      result << "#{key} "
       result << "$#{value[:amount]} "
+      result << "#{value[:change_amount]}  "
       result << "#{Emoji.trend(value[:change_amount].to_f)} "
-      result << "#{value[:change_amount]}, "
-      result << "#{value[:change_percent]}, "
+      result << "#{key} "
+      # result << "#{value[:change_percent]} "
       result << "#{value[:name]}\n"
     end
     result
@@ -38,6 +23,8 @@ module FormatHelper
     end
     result
   end
+
+  private
 
   # TODO: refactor this, inconsistent with other method
   def print_spec(data)
