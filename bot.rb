@@ -12,13 +12,14 @@ Telegram::Bot::Client.run(TOKEN, logger: logger) do |bot|
 
       # process the params
       arg = message.text.split(' ')
-      arg[0].slice!(BOT_NAME)
+      bot_name = arg[0].slice!(BOT_NAME)
       cmd = arg[0] ? arg[0][1..-1] : nil
       param = arg[1] && arg[1].match(/^[A-Za-z0-9.]+$/) ? arg[1].upcase : nil
       name = message.from.first_name
 
       # validation
       if DateTime.now.to_time.to_i - message.date > TIMEOUT
+      elsif message.chat.id != message.from.id && bot_name != BOT_NAME
       elsif !message.text
         bot.api.send_message(chat_id: message.chat.id, text: Reply::INSTRUCTION)
       elsif !COMMAND.key?(cmd.to_sym)

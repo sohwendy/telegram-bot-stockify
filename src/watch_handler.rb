@@ -37,7 +37,7 @@ class WatchHandler
 
   def add(options = {})
     user = options[:user]
-    param = options[:param].downcase
+    param = options[:param]
 
     return Reply::AUTHENTICATE_FAIL unless @list.key?(user)
     return Reply::MAX_STOCKS if @list[user].size >= WATCH_STOCKS_LIMIT
@@ -52,7 +52,7 @@ class WatchHandler
 
   def remove(options = {})
     user = options[:user]
-    param = options[:param].downcase
+    param = options[:param]
 
     return Reply::AUTHENTICATE_FAIL unless @list.key?(user)
     return Reply::REMOVE_FAIL unless @list.dig(user, param)
