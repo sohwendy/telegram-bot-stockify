@@ -1,3 +1,4 @@
+require 'csv'
 require 'telegram/bot'
 require_relative 'src/constants'
 require_relative 'src/watch_handler'
