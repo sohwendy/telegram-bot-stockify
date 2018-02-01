@@ -1,4 +1,4 @@
-#telegram-bot-kabushiki
+# telegram-bot-kabushiki
 
 WIP
 
@@ -7,25 +7,27 @@ Kabushiki is a japanese word for stock market
 
 Using the [telegram-bot-ruby](https://github.com/atipugin/telegram-bot-ruby) wrapper for Telegram API.
 
-##Installation
+## Installation
 
 Execute:
-```shell
+```
+shell
 $ bundle
 ```
 
-##Configuration
+## Configuration
 
 1. Change config/watch.yaml.sample to config/watch.yaml
 2. Add the name 'BOT_NAME' and token 'TOKEN' to the enviroment variables. Obtain them from [BotFather](https://core.telegram.org/bots#botfather)
 
 
 Execute:
-```shell
+```
+shell
 $ ruby bot.rb
 ```
 
-##Contributing
+## Contributing
 
 1. Fork it
 2. Create your feature branch (git checkout -b my-new-feature)
@@ -33,7 +35,7 @@ $ ruby bot.rb
 4. Push to the branch (git push origin my-new-feature)
 5. Create new Pull Request
 
-##Usage
+## Usage
 
 `/help`: shows the commands available
 
@@ -47,5 +49,5 @@ $ ruby bot.rb
 
 `/stat <ticker>`: (expert mode) provides details about the stock counter (example: `/stat GOOG`)
 
-##TODO
+## TODO
 1. Write test for new commands
