@@ -10,5 +10,5 @@ group :development, :test do
   gem 'webmock'
   gem 'rspec'
   gem 'byebug'
-  gem 'rubocop', '~> 0.37.2', require: false
+  gem 'rubocop', require: false
 end

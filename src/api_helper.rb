@@ -4,6 +4,7 @@ require 'nokogiri'
 require 'uri'
 require 'date'
 require 'sanitize'
+require 'csv'
 
 module ApiHelper
   FLAG = { 'NAME' => 'n',
